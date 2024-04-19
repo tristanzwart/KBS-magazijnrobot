@@ -4,6 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class GUI extends JFrame{
+    private MainPanel mainPanel;
+    private SideBarPanel sideBar;
 
     public GUI() {
         //Standaard parameters
@@ -16,17 +18,29 @@ public class GUI extends JFrame{
         //Stel het scherm in op fullscreen
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
-
-
-
         //Voeg het Jpanel toe
-        MainPanel panel = new MainPanel();
-        add(panel);
-        SideBarPanel sideBar = new SideBarPanel();
+        mainPanel = new MainPanel();
+        add(mainPanel);
+        sideBar = new SideBarPanel(this);
         add(sideBar);
 
 
         setVisible(true);
+    }
+
+    public void toonVoorraadScherm(){
+        //Leeg het main panel zodat er nieuwe elementen kunnen worden toegevoegd
+
+        //Leeg het Jpanel
+        mainPanel.removeAll();
+
+        //TODO: Voeg de elementen weer toe
+        JLabel label = new JLabel("Voorraad scherm");
+        mainPanel.add(label);
+
+        //Revalidate en repaint
+        mainPanel.revalidate();
+        //mainPanel.repaint();
     }
 
 
