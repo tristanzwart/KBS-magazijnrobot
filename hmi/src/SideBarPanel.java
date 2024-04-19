@@ -10,7 +10,7 @@ public class SideBarPanel extends JPanel implements ActionListener {
     public SideBarPanel(GUI gui){
         this.gui = gui;
 
-        setPreferredSize(new Dimension(120, 1080));
+        setPreferredSize(new Dimension(120, 1017));
 
         voorraad = new JButton("Voorraad");
         voorraad.addActionListener(this);
@@ -27,6 +27,7 @@ public class SideBarPanel extends JPanel implements ActionListener {
         if(e.getSource() == voorraad){
             //De vooraad knop is ingedrukt
             System.out.println("Vooraad scherm tonen....");
+            //Toon het voorraadscherm
             gui.toonVoorraadScherm();
         }
     }

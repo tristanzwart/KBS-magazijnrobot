@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -6,13 +7,15 @@ import java.awt.event.ActionListener;
 public class GUI extends JFrame{
     private MainPanel mainPanel;
     private SideBarPanel sideBar;
+    private BottomBarPanel bottomBar;
 
     public GUI() {
         //Standaard parameters
         setTitle("Magazijnrobot");
         setSize(1920, 1080);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        setLayout(new BorderLayout(0,0));
+        //setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         //Einde standaard parameters
 
         //Stel het scherm in op fullscreen
@@ -20,27 +23,62 @@ public class GUI extends JFrame{
 
         //Voeg het Jpanel toe
         mainPanel = new MainPanel();
-        add(mainPanel);
+        add(mainPanel, BorderLayout.CENTER);
         sideBar = new SideBarPanel(this);
-        add(sideBar);
-
+        add(sideBar, BorderLayout.EAST);
+        bottomBar = new BottomBarPanel();
+        add(bottomBar, BorderLayout.SOUTH);
 
         setVisible(true);
     }
 
     public void toonVoorraadScherm(){
-        //Leeg het main panel zodat er nieuwe elementen kunnen worden toegevoegd
+        //Deze functie is voor het tonen van het voorraadscherm
+        //Deze functie wordt aangeroepen vanuit de SideBarPanel als je op de knop drukt
+        //Er is dus een functie voor elk apart scherm buiten de dialoogen
 
         //Leeg het Jpanel
         mainPanel.removeAll();
 
         //TODO: Voeg de elementen weer toe
-        JLabel label = new JLabel("Voorraad scherm");
-        mainPanel.add(label);
+//        JLabel label = new JLabel("Voorraad scherm");
+//        mainPanel.add(label);
+
+        //Create column names
+        String[] columnNames = {"Locatie", "Artikelnummer", "Op vooraad", "Artikelnaam"};
+
+        // Create data
+        Object[][] data = {
+                {"A1", "1133045", "20", "Zonnebril"},
+                {"D3", "1133345", "20", "Mok"},
+                {"C5", "1033345", "20", "Zaklamp"},
+                {"A2", "1133305", "20", "T-shirt"}
+
+        };
+
+        // Create table with data
+        JTable table = new JTable(new DefaultTableModel(data, columnNames));
+
+        // Set selection mode
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        // Create scroll pane and add table to it
+        JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.setPreferredSize(new Dimension(1800, 917));
+
+        // Add scroll pane to main panel
+        mainPanel.add(scrollPane);
+
+        //TODO: Maak een extra panel voor de bottom bar met knoppen
 
         //Revalidate en repaint
         mainPanel.revalidate();
         //mainPanel.repaint();
+
+        bottomBar.removeAll();
+        bottomBar.addButton("Artikel toevoegen");
+        bottomBar.addButton("Artikel aanpassen");
+        bottomBar.addButton("Verversen");
     }
 
 
