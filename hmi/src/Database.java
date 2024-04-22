@@ -40,7 +40,7 @@ public class Database {
         List<Object[]> rows = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(url, user, password);
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM stockitems")) {
+             ResultSet rs = stmt.executeQuery("SELECT StockItemID, ColorID, StockItemName FROM stockitems")) {
 
             ResultSetMetaData rsmd = rs.getMetaData();
             int columnCount = rsmd.getColumnCount();
