@@ -10,7 +10,7 @@ public class Database {
     public Database() {
 
     }
-
+    /*
     public void allStockItems () {
         try (Connection conn = DriverManager.getConnection(url, user, password); // Maak verbinding met de database
              Statement stmt = conn.createStatement();
@@ -35,20 +35,24 @@ public class Database {
             System.out.println("Fout bij het ophalen van stockitems");
         }
     }
+    */
 
     public Object[][] getStockItems() {
         List<Object[]> rows = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(url, user, password);
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT StockItemID, ColorID, StockItemName FROM stockitems")) {
+             ResultSet rs = stmt.executeQuery("SELECT StockItemID, ColorID, StockItemName FROM stockitems")) { //TODO: Query is nog niet correct
 
             ResultSetMetaData rsmd = rs.getMetaData();
             int columnCount = rsmd.getColumnCount();
 
             while (rs.next()) {
                 Object[] row = new Object[4]; //4 is het aantal kolommen dit staat vast
-                row[0] = "DUMMY DATA";
-                for (int i = 2; i <= 4; i++) {
+
+                for (int i = 1; i <= 4; i++) {
+                    if(i == 1){
+                        row[0] = "DUMMY DATA";
+                    }
                     row[i-1] = rs.getObject(i-1);
                 }
                 rows.add(row);
@@ -58,7 +62,7 @@ public class Database {
         }
         return rows.toArray(new Object[0][]);
     }
-
+    /*
     public void allOrders () {
         try (Connection conn = DriverManager.getConnection(url, user, password); // Maak verbinding met de database
              Statement stmt = conn.createStatement();
@@ -83,4 +87,5 @@ public class Database {
             System.out.println("Fout bij het ophalen van orders");
         }
     }
+    */
 }

@@ -9,9 +9,12 @@ public class GUI extends JFrame{
     private SideBarPanel sideBar;
     private BottomBarPanel bottomBar;
 
+    private Database db;
+
     private JTable table;
 
     public GUI() {
+        db = new Database();
         //Standaard parameters
         setTitle("Magazijnrobot");
         setSize(1920, 1080);
@@ -49,7 +52,8 @@ public class GUI extends JFrame{
         //Create column names
         String[] columnNames = {"Locatie", "Artikelnummer", "Op vooraad", "Artikelnaam"};
 
-        // Create data
+        /*
+        // Deze code was voor test doeleinden / dummy data
         Object[][] data = {
                 {"A1", "1133045", "20", "Zonnebril"},
                 {"D3", "1133345", "20", "Mok"},
@@ -57,6 +61,10 @@ public class GUI extends JFrame{
                 {"A2", "1133305", "20", "T-shirt"}
 
         };
+        */
+
+        //Haal de data op uit de database
+        Object[][] data = db.getStockItems();
 
         // Create table with data
         table = new JTable(new DefaultTableModel(data, columnNames));
@@ -84,7 +92,6 @@ public class GUI extends JFrame{
     }
 
     public void updateTableData() {
-    Database db = new Database();
     Object[][] data = db.getStockItems();
 
     String[] columnNames = {"Locatie", "Artikelnummer", "Op vooraad", "Artikelnaam"};
