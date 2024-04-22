@@ -52,8 +52,9 @@ public class Database {
                 for (int i = 1; i <= 4; i++) {
                     if(i == 1){
                         row[0] = "DUMMY DATA";
+                    }else {
+                        row[i - 1] = rs.getObject(i - 1);
                     }
-                    row[i-1] = rs.getObject(i-1);
                 }
                 rows.add(row);
             }
