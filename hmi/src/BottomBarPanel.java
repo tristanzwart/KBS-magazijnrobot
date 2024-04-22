@@ -4,11 +4,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class BottomBarPanel extends JPanel implements ActionListener {
+    private GUI gui;
+
     private JButton artikelToevoegen;
     private JButton artikelAanpassen;
     private JButton verversen;
 
-    public BottomBarPanel(){
+    public BottomBarPanel(GUI gui){
+        this.gui = gui;
         setPreferredSize(new Dimension(1680, 100));
         setLayout(new FlowLayout(FlowLayout.LEFT, 5, 37));
 
@@ -44,6 +47,9 @@ public class BottomBarPanel extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
+        if(e.getSource() == verversen){
+            System.out.println("Verversen");
+            gui.updateTableData();
+        }
     }
 }

@@ -1,4 +1,6 @@
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Database {
     private static String url = "jdbc:mysql://localhost:3306/nerdygadgets";
@@ -32,6 +34,29 @@ public class Database {
         } catch (SQLException e) {
             System.out.println("Fout bij het ophalen van stockitems");
         }
+    }
+
+    public Object[][] getStockItems() {
+        List<Object[]> rows = new ArrayList<>();
+        try (Connection conn = DriverManager.getConnection(url, user, password);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM stockitems")) {
+
+            ResultSetMetaData rsmd = rs.getMetaData();
+            int columnCount = rsmd.getColumnCount();
+
+            while (rs.next()) {
+                Object[] row = new Object[4]; //4 is het aantal kolommen dit staat vast
+                row[0] = "DUMMY DATA";
+                for (int i = 2; i <= 4; i++) {
+                    row[i-1] = rs.getObject(i-1);
+                }
+                rows.add(row);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching stock items");
+        }
+        return rows.toArray(new Object[0][]);
     }
 
     public void allOrders () {

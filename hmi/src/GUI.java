@@ -9,6 +9,8 @@ public class GUI extends JFrame{
     private SideBarPanel sideBar;
     private BottomBarPanel bottomBar;
 
+    private JTable table;
+
     public GUI() {
         //Standaard parameters
         setTitle("Magazijnrobot");
@@ -26,7 +28,7 @@ public class GUI extends JFrame{
         add(mainPanel, BorderLayout.CENTER);
         sideBar = new SideBarPanel(this);
         add(sideBar, BorderLayout.EAST);
-        bottomBar = new BottomBarPanel();
+        bottomBar = new BottomBarPanel(this);
         add(bottomBar, BorderLayout.SOUTH);
 
         setVisible(true);
@@ -57,7 +59,7 @@ public class GUI extends JFrame{
         };
 
         // Create table with data
-        JTable table = new JTable(new DefaultTableModel(data, columnNames));
+        table = new JTable(new DefaultTableModel(data, columnNames));
 
         // Set selection mode
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -81,5 +83,18 @@ public class GUI extends JFrame{
         bottomBar.addButton("Verversen");
     }
 
+    public void updateTableData() {
+    Database db = new Database();
+    Object[][] data = db.getStockItems();
 
+    String[] columnNames = {"Locatie", "Artikelnummer", "Op vooraad", "Artikelnaam"};
+    DefaultTableModel model = (DefaultTableModel) table.getModel();
+    model.setDataVector(data, columnNames);
+}
+
+//Naam: Kaas, nummer: 224575, voorraad: 20
+//{"kaas", "224575", "20"},
+
+    //Loopen door de buitenste array
+    //In de binnense array moet je voor plek 0 data toevoegen
 }
