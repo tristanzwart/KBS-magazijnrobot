@@ -12,12 +12,16 @@ public class SideBarPanel extends JPanel implements ActionListener {
         this.gui = gui;
 
         setPreferredSize(new Dimension(120, 1017));
+        setLayout(new FlowLayout());
 
         orders = new JButton("Orders");
         orders.addActionListener(this);
         voorraad = new JButton("Voorraad");
         voorraad.addActionListener(this);
 
+        Dimension buttonSize = new Dimension(90, 26);
+        orders.setPreferredSize(buttonSize);
+        voorraad.setPreferredSize(buttonSize);
 
         add(orders);
         add(voorraad);
