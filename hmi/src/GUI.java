@@ -1,20 +1,36 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class GUI extends JFrame{
     private MainPanel mainPanel;
     private SideBarPanel sideBar;
     private BottomBarPanel bottomBar;
 
+    private ArtikelToevoegenDialog artikelToevoegenDialog;
+
     private Database db;
 
     private JTable table;
+    private JScrollPane scrollPane;
 
     public GUI() {
+        artikelToevoegenDialog = new ArtikelToevoegenDialog(this, true);
         db = new Database();
+
+        //Init tablel met lege data niet toevoegen aan mainPanel
+        Object[][] data = {{}};
+        String[] columnNames = {};
+
+        table = new JTable(new DefaultTableModel(data, columnNames));
+
+        // Set selection mode
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        // Create scroll pane and add table to it
+        scrollPane = new JScrollPane(table);
+        scrollPane.setPreferredSize(new Dimension(1800, 917));
+
         //Standaard parameters
         setTitle("Magazijnrobot");
         setSize(1920, 1080);
@@ -45,41 +61,13 @@ public class GUI extends JFrame{
         //Leeg het Jpanel
         mainPanel.removeAll();
 
-        //TODO: Voeg de elementen weer toe
-//        JLabel label = new JLabel("Voorraad scherm");
-//        mainPanel.add(label);
-
-        //Create column names
-        String[] columnNames = {"Locatie", "Artikelnummer", "Op vooraad", "Artikelnaam"};
-
-        /*
-        // Deze code was voor test doeleinden / dummy data
-        Object[][] data = {
-                {"A1", "1133045", "20", "Zonnebril"},
-                {"D3", "1133345", "20", "Mok"},
-                {"C5", "1033345", "20", "Zaklamp"},
-                {"A2", "1133305", "20", "T-shirt"}
-
-        };
-        */
-
-        //Haal de data op uit de database
-        Object[][] data = db.getStockItems();
-
-        // Create table with data
-        table = new JTable(new DefaultTableModel(data, columnNames));
-
-        // Set selection mode
-        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-        // Create scroll pane and add table to it
-        JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setPreferredSize(new Dimension(1800, 917));
+        //Update de tabel data
+        updateVoorraadTableData();
 
         // Add scroll pane to main panel
         mainPanel.add(scrollPane);
 
-        //TODO: Maak een extra panel voor de bottom bar met knoppen
+
 
         //Revalidate en repaint
         mainPanel.revalidate();
@@ -91,13 +79,25 @@ public class GUI extends JFrame{
         bottomBar.addButton("Verversen");
     }
 
-    public void updateTableData() {
+    public void updateVoorraadTableData() {
     Object[][] data = db.getStockItems();
 
     String[] columnNames = {"Locatie", "Artikelnummer", "Op vooraad", "Artikelnaam"};
     DefaultTableModel model = (DefaultTableModel) table.getModel();
     model.setDataVector(data, columnNames);
 }
+
+public void updateOrderTabelData() {
+    //Object[][] data = db.getOrders();
+
+    String[] columnNames = {"Ordernummer", "Klantennummer", "Aantal producten", "Opmerkingen"};
+    DefaultTableModel model = (DefaultTableModel) table.getModel();
+    //model.setDataVector(data, columnNames);
+}
+
+public void toonArtikelToevoegenDialog(){
+        artikelToevoegenDialog.toonDialog();
+    }
 
 //Naam: Kaas, nummer: 224575, voorraad: 20
 //{"kaas", "224575", "20"},
