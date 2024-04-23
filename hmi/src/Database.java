@@ -41,7 +41,7 @@ public class Database {
         List<Object[]> rows = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(url, user, password);
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT s.StockItemID, h.QuantityOnHand, StockItemName FROM stockitems s JOIN stockitemholdings h ON s.StockItemID = h.StockItemID")) { //TODO: Query is nog niet correct
+             ResultSet rs = stmt.executeQuery("SELECT s.StockItemID, h.QuantityOnHand, StockItemName FROM stockitems s JOIN stockitemholdings h ON s.StockItemID = h.StockItemID")) {
 
             ResultSetMetaData rsmd = rs.getMetaData();
             int columnCount = rsmd.getColumnCount();
@@ -68,7 +68,7 @@ public class Database {
         List<Object[]> rows = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(url, user, password);
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT o.OrderId, o.CustomerID, SUM(l.Quantity) AS TotalQuantity, o.Comments FROM orders o JOIN orderlines l ON o.OrderID = l.OrderID GROUP BY o.OrderId, o.CustomerID, o.Comments")) { //TODO: Query is nog niet correct
+             ResultSet rs = stmt.executeQuery("SELECT o.OrderId, o.CustomerID, SUM(l.Quantity) AS TotalQuantity, o.Comments FROM orders o JOIN orderlines l ON o.OrderID = l.OrderID GROUP BY o.OrderId, o.CustomerID, o.Comments")) {
 
 
             ResultSetMetaData rsmd = rs.getMetaData();
@@ -78,11 +78,7 @@ public class Database {
                 Object[] row = new Object[4]; //4 is het aantal kolommen dit staat vast
 
                 for (int i = 1; i <= 4; i++) {
-                    if(i == 1){
-                        row[0] = "DUMMY DATA";
-                    }else {
-                        row[i - 1] = rs.getObject(i - 1);
-                    }
+                    row[i - 1] = rs.getObject(i);
                 }
                 rows.add(row);
             }
@@ -91,4 +87,15 @@ public class Database {
         }
         return rows.toArray(new Object[0][]);
     }
+
+//    public void addStockItem(int StockItemID, int QuantityOnHand, String Comments) {
+//        try (Connection conn = DriverManager.getConnection(url, user, password);
+//             Statement stmt = conn.createStatement();
+//             ResultSet rs = stmt.executeQuery("SELECT o.OrderId, o.CustomerID, SUM(l.Quantity) AS TotalQuantity, o.Comments FROM orders o JOIN orderlines l ON o.OrderID = l.OrderID GROUP BY o.OrderId, o.CustomerID, o.Comments")) {
+//
+//
+//        } catch (SQLException e) {
+//            System.out.println("Error fetching order items");
+//        }
+//    } NOG NIET VOLTOOID :)(:
 }
