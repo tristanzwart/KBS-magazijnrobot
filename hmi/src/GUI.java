@@ -3,6 +3,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 public class GUI extends JFrame{
+    static String huidigScherm;
     private MainPanel mainPanel;
     private SideBarPanel sideBar;
     private BottomBarPanel bottomBar;
@@ -54,6 +55,7 @@ public class GUI extends JFrame{
     }
 
     public void toonVoorraadScherm(){
+        GUI.huidigScherm = "voorraad";
         //Deze functie is voor het tonen van het voorraadscherm
         //Deze functie wordt aangeroepen vanuit de SideBarPanel als je op de knop drukt
         //Er is dus een functie voor elk apart scherm buiten de dialoogen
@@ -79,6 +81,32 @@ public class GUI extends JFrame{
         bottomBar.addButton("Verversen");
     }
 
+    public void toonOrdersScherm(){
+        GUI.huidigScherm = "order";
+        //Deze functie is voor het tonen van het voorraadscherm
+        //Deze functie wordt aangeroepen vanuit de SideBarPanel als je op de knop drukt
+        //Er is dus een functie voor elk apart scherm buiten de dialoogen
+
+        //Leeg het Jpanel
+        mainPanel.removeAll();
+
+        //Update de tabel data
+        updateOrderTabelData();
+
+        // Add scroll pane to main panel
+        mainPanel.add(scrollPane);
+
+
+
+        //Revalidate en repaint
+        mainPanel.revalidate();
+        //mainPanel.repaint();
+
+        bottomBar.removeAll();
+        //TODO: Maak de knoppen voor de orders in de bottom bar
+        bottomBar.addButton("Verversen");
+    }
+
     public void updateVoorraadTableData() {
     Object[][] data = db.getStockItems();
 
@@ -87,12 +115,14 @@ public class GUI extends JFrame{
     model.setDataVector(data, columnNames);
 }
 
+
+
 public void updateOrderTabelData() {
-    //Object[][] data = db.getOrders();
+    Object[][] data = db.getOrders();
 
     String[] columnNames = {"Ordernummer", "Klantennummer", "Aantal producten", "Opmerkingen"};
     DefaultTableModel model = (DefaultTableModel) table.getModel();
-    //model.setDataVector(data, columnNames);
+    model.setDataVector(data, columnNames);
 }
 
 public void toonArtikelToevoegenDialog(){

@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 
 public class SideBarPanel extends JPanel implements ActionListener {
     private GUI gui;
+    private JButton orders;
     private JButton voorraad;
 
     public SideBarPanel(GUI gui){
@@ -12,9 +13,13 @@ public class SideBarPanel extends JPanel implements ActionListener {
 
         setPreferredSize(new Dimension(120, 1017));
 
+        orders = new JButton("Orders");
+        orders.addActionListener(this);
         voorraad = new JButton("Voorraad");
         voorraad.addActionListener(this);
 
+
+        add(orders);
         add(voorraad);
 
         setVisible(true);
@@ -29,6 +34,11 @@ public class SideBarPanel extends JPanel implements ActionListener {
             System.out.println("Vooraad scherm tonen....");
             //Toon het voorraadscherm
             gui.toonVoorraadScherm();
+        }else if(e.getSource() == orders){
+            //De vooraad knop is ingedrukt
+            System.out.println("Orders scherm tonen....");
+            //Toon het voorraadscherm
+            gui.toonOrdersScherm();
         }
     }
 
