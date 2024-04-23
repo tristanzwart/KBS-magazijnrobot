@@ -90,8 +90,8 @@ public class GUI extends JFrame{
 
         bottomBar.removeAll();
         if(schermNummer == 1) {
-            bottomBar.addButton("Artikel toevoegen");
-            bottomBar.addButton("Artikel aanpassen");
+            //bottomBar.addButton("Artikel toevoegen");
+            //bottomBar.addButton("Artikel aanpassen");
             bottomBar.addButton("Verversen");
 
         } else if (schermNummer == 2) {
