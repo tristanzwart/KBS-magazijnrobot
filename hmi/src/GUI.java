@@ -54,8 +54,19 @@ public class GUI extends JFrame{
         setVisible(true);
     }
 
-    public void toonVoorraadScherm(){
-        huidigScherm = "voorraad";
+    public void toonScherm(String schermNaam){
+        int schermNummer;
+        if(schermNaam.equals("voorraad")) {
+            huidigScherm = "voorraad";
+            schermNummer = 1;
+        } else if (schermNaam.equals("order")) {
+            huidigScherm = "order";
+            schermNummer = 2;
+        }else{
+            System.out.println("Dit scherm bestaat niet: " + schermNaam);
+            return;
+        }
+
         //Deze functie is voor het tonen van het voorraadscherm
         //Deze functie wordt aangeroepen vanuit de SideBarPanel als je op de knop drukt
         //Er is dus een functie voor elk apart scherm buiten de dialoogen
@@ -64,48 +75,32 @@ public class GUI extends JFrame{
         mainPanel.removeAll();
 
         //Update de tabel data
-        updateVoorraadTableData();
+        if(schermNummer == 1) {
+            updateVoorraadTableData();
+        } else if (schermNummer == 2) {
+            updateOrderTabelData();
+        }
 
         // Add scroll pane to main panel
         mainPanel.add(scrollPane);
-
-
 
         //Revalidate en repaint
         mainPanel.revalidate();
         //mainPanel.repaint();
 
         bottomBar.removeAll();
-        bottomBar.addButton("Artikel toevoegen");
-        bottomBar.addButton("Artikel aanpassen");
-        bottomBar.addButton("Verversen");
+        if(schermNummer == 1) {
+            bottomBar.addButton("Artikel toevoegen");
+            bottomBar.addButton("Artikel aanpassen");
+            bottomBar.addButton("Verversen");
+
+        } else if (schermNummer == 2) {
+            bottomBar.addButton("Verversen");
+        }
+
+        bottomBar.revalidate();
     }
 
-    public void toonOrdersScherm(){
-        huidigScherm = "order";
-        //Deze functie is voor het tonen van het voorraadscherm
-        //Deze functie wordt aangeroepen vanuit de SideBarPanel als je op de knop drukt
-        //Er is dus een functie voor elk apart scherm buiten de dialoogen
-
-        //Leeg het Jpanel
-        mainPanel.removeAll();
-
-        //Update de tabel data
-        updateOrderTabelData();
-
-        // Add scroll pane to main panel
-        mainPanel.add(scrollPane);
-
-
-
-        //Revalidate en repaint
-        mainPanel.revalidate();
-        //mainPanel.repaint();
-
-        bottomBar.removeAll();
-        //TODO: Maak de knoppen voor de orders in de bottom bar
-        bottomBar.addButton("Verversen");
-    }
 
     public void updateVoorraadTableData() {
     Object[][] data = db.getStockItems();

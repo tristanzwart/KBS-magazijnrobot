@@ -37,12 +37,12 @@ public class SideBarPanel extends JPanel implements ActionListener {
             //De vooraad knop is ingedrukt
             System.out.println("Vooraad scherm tonen....");
             //Toon het voorraadscherm
-            gui.toonVoorraadScherm();
+            gui.toonScherm("voorraad");
         }else if(e.getSource() == orders){
             //De vooraad knop is ingedrukt
             System.out.println("Orders scherm tonen....");
             //Toon het voorraadscherm
-            gui.toonOrdersScherm();
+            gui.toonScherm("order");
         }
     }
 
