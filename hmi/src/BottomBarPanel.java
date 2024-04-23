@@ -49,10 +49,10 @@ public class BottomBarPanel extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == verversen){
             System.out.println("Verversen");
-            if(GUI.huidigScherm.equals("voorraad")) {
+            if(gui.getHuidigScherm().equals("voorraad")) {
                 //Ververs de voorraad tabel
                 gui.updateVoorraadTableData();
-            }else if(GUI.huidigScherm.equals("order")){
+            }else if(gui.getHuidigScherm().equals("order")){
                 //Ververs de orders tabel
                 gui.updateOrderTabelData();
             }

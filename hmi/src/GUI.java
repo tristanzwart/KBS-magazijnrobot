@@ -3,7 +3,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 public class GUI extends JFrame{
-    static String huidigScherm;
+    private String huidigScherm;
     private MainPanel mainPanel;
     private SideBarPanel sideBar;
     private BottomBarPanel bottomBar;
@@ -55,7 +55,7 @@ public class GUI extends JFrame{
     }
 
     public void toonVoorraadScherm(){
-        GUI.huidigScherm = "voorraad";
+        huidigScherm = "voorraad";
         //Deze functie is voor het tonen van het voorraadscherm
         //Deze functie wordt aangeroepen vanuit de SideBarPanel als je op de knop drukt
         //Er is dus een functie voor elk apart scherm buiten de dialoogen
@@ -82,7 +82,7 @@ public class GUI extends JFrame{
     }
 
     public void toonOrdersScherm(){
-        GUI.huidigScherm = "order";
+        huidigScherm = "order";
         //Deze functie is voor het tonen van het voorraadscherm
         //Deze functie wordt aangeroepen vanuit de SideBarPanel als je op de knop drukt
         //Er is dus een functie voor elk apart scherm buiten de dialoogen
@@ -129,9 +129,7 @@ public void toonArtikelToevoegenDialog(){
         artikelToevoegenDialog.toonDialog();
     }
 
-//Naam: Kaas, nummer: 224575, voorraad: 20
-//{"kaas", "224575", "20"},
-
-    //Loopen door de buitenste array
-    //In de binnense array moet je voor plek 0 data toevoegen
+    public String getHuidigScherm(){
+        return huidigScherm;
+    }
 }
