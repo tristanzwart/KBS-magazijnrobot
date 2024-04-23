@@ -8,7 +8,7 @@ public class GUI extends JFrame{
     private SideBarPanel sideBar;
     private BottomBarPanel bottomBar;
 
-    private ArtikelToevoegenDialog artikelToevoegenDialog;
+    private ArtikelDialog artikelDialog;
 
     private Database db;
 
@@ -16,7 +16,7 @@ public class GUI extends JFrame{
     private JScrollPane scrollPane;
 
     public GUI() {
-        artikelToevoegenDialog = new ArtikelToevoegenDialog(this, true);
+        artikelDialog = new ArtikelDialog(this, true);
         db = new Database();
 
         //Init tablel met lege data niet toevoegen aan mainPanel
@@ -48,7 +48,7 @@ public class GUI extends JFrame{
         add(mainPanel, BorderLayout.CENTER);
         sideBar = new SideBarPanel(this);
         add(sideBar, BorderLayout.EAST);
-        bottomBar = new BottomBarPanel(this);
+        bottomBar = new BottomBarPanel(this, artikelDialog);
         add(bottomBar, BorderLayout.SOUTH);
 
         setVisible(true);
@@ -121,7 +121,7 @@ public void updateOrderTabelData() {
 }
 
 public void toonArtikelToevoegenDialog(){
-        artikelToevoegenDialog.toonDialog();
+        artikelDialog.toonDialog();
     }
 
     public String getHuidigScherm(){

@@ -3,7 +3,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class ArtikelToevoegenDialog extends JDialog implements ActionListener{
+public class ArtikelDialog extends JDialog implements ActionListener{
     private JTextField locatie;
     private JTextField artikelnummer;
     private JTextField voorraad;
@@ -16,12 +16,11 @@ public class ArtikelToevoegenDialog extends JDialog implements ActionListener{
 
     private boolean isOk;
 
-    public ArtikelToevoegenDialog(JFrame frame, boolean modal) {
+    public ArtikelDialog(JFrame frame, boolean modal) {
         super(frame, modal);
-        //TODO: Reuse same dialog every time
 
         //Standaard waarden
-        setTitle("Artikel toevoegen");
+        setTitle("Artikel");
         setSize(300, 230);
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setLayout(new GridLayout(5, 2));
@@ -52,10 +51,16 @@ public class ArtikelToevoegenDialog extends JDialog implements ActionListener{
     }
 
     public void toonDialog(){
-        locatie.setText("");
-        artikelnummer.setText("");
-        voorraad.setText("");
-        artikelnaam.setText("");
+        toonDialog("Artikel toevoegen", "", "", "", "");
+    }
+
+    public void toonDialog(String titel, String locatie, String artikelnummer, String voorraad, String artikelnaam){
+        //TODO: Artikelnummer mag niet worden gemaakt door de gebruiker maar word gergeld door de db
+        setTitle(titel);
+        this.locatie.setText(locatie);
+        this.artikelnummer.setText(artikelnummer);
+        this.voorraad.setText(voorraad);
+        this.artikelnaam.setText(artikelnaam);
         setVisible(true);
     }
 

@@ -6,12 +6,15 @@ import java.awt.event.ActionListener;
 public class BottomBarPanel extends JPanel implements ActionListener {
     private GUI gui;
 
+    private ArtikelDialog artikelDialog;
+
     private JButton artikelToevoegen;
     private JButton artikelAanpassen;
     private JButton verversen;
 
-    public BottomBarPanel(GUI gui){
+    public BottomBarPanel(GUI gui, ArtikelDialog artikelDialog){
         this.gui = gui;
+        this.artikelDialog = artikelDialog;
         setPreferredSize(new Dimension(1680, 100));
         setLayout(new FlowLayout(FlowLayout.LEFT, 5, 37));
 
@@ -59,12 +62,12 @@ public class BottomBarPanel extends JPanel implements ActionListener {
 
         } else if (e.getSource() == artikelToevoegen) {
             //TODO: Call modal dialoge
-            gui.toonArtikelToevoegenDialog();
+            artikelDialog.toonDialog();
             //TODO:Get data from dialoge
 
             //TODO: Add data to database
 
-            //TODO: Refrash table
+            //TODO: Refresh table
             
         }
     }
