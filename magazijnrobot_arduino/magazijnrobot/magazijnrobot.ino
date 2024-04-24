@@ -31,22 +31,28 @@ void loop() {
   eenmaalknopindrukken();
   
 }
+
+
 void eenmaalknopindrukken(){
   bool knop1 = knopuitlezen();
-  if(knop1 != laasteknopstatus && knop1 == HIGH ){
+  if(knop1 != laasteknopstatus && knop1 == HIGH ){    // zorgt ervoor dat de knop inet herhaalt (een signaal)
     knopingedrukt();
   }
   laasteknopstatus = knop1;
 }
+
+
+
+
 bool knopuitlezen(){
   bool knopWaarde = digitalRead(knop);
   delay(50);
-  
   return knopWaarde;
 
 }
+
 void knopingedrukt(){
-  Serial.print('g');
+  Serial.print('g');      //versturen van een signaal 
 }
 
 
@@ -57,24 +63,23 @@ void uitlezenJoystick(){
 
   if(xValue < 500){
     stop();
-    naarRechts(255);
+    naarRechts(255);      //het naar rechts bewegen van de joystick
     
     
   }
   else if(xValue> 540){
     stop();
     
-    naarLinks(255);
-
+    naarLinks(255);         //het naar links bewegen van de joystick
   }
   else if (yValue < 490){
     stop();
-    naarBoven(map(xValue,490, 0,  0 , 255));
+    naarBoven(255);         // het naar boven bewegen van joystick
 
   }
   else if(yValue >520){
     stop();
-    naarBeneden(110);
+    naarBeneden(110);       //het naar beneden bewegen van de joystick
 
   }
   else{
@@ -84,10 +89,14 @@ void uitlezenJoystick(){
 
   
   
-}
+} 
+
+
+
+// bewegen robot met pwm meegeven
 void stop(){
   analogWrite(pwmPinUpDown, 0);
-  analogWrite(pwmPinLinksRechts, 0);
+  analogWrite(pwmPinLinksRechts, 0);   
 
 }
 
