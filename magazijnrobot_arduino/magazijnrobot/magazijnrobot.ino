@@ -26,7 +26,7 @@ void setup() {
 }
 
 void loop() {
-  uitlezenJoystick();
+  uitlezenJoystick(); // leest joystick uit en beweeegt hiermee de robot
   //eenmaalknopindrukken();
   eenmaalknopindrukken();
   
