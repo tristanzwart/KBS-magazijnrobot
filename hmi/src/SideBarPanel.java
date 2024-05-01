@@ -8,6 +8,8 @@ public class SideBarPanel extends JPanel implements ActionListener {
     private JButton orders;
     private JButton voorraad;
 
+    private JButton noodstop;
+
     public SideBarPanel(GUI gui){
         this.gui = gui;
 
@@ -18,13 +20,21 @@ public class SideBarPanel extends JPanel implements ActionListener {
         orders.addActionListener(this);
         voorraad = new JButton("Voorraad");
         voorraad.addActionListener(this);
+        noodstop = new JButton("Noodstop");
+        noodstop.addActionListener(this);
+
 
         Dimension buttonSize = new Dimension(90, 26);
         orders.setPreferredSize(buttonSize);
         voorraad.setPreferredSize(buttonSize);
+        noodstop.setPreferredSize(buttonSize);
 
         add(orders);
         add(voorraad);
+
+        noodstop.setBackground(Color.red);
+        add(noodstop);
+
 
         setVisible(true);
     }
@@ -43,6 +53,14 @@ public class SideBarPanel extends JPanel implements ActionListener {
             System.out.println("Orders scherm tonen....");
             //Toon het voorraadscherm
             gui.toonScherm("order");
+        }else if(e.getSource() == noodstop) {
+            if (noodstop.getBackground().equals(Color.GREEN)) {
+                // code voor het stoppen van de noodstop
+                noodstop.setBackground(Color.red);
+            } else {
+                // code voor het starten van de noodstop
+                noodstop.setBackground(Color.GREEN);
+            }
         }
     }
 
