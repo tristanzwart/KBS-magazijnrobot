@@ -41,7 +41,7 @@ public class Database {
         List<Object[]> rows = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(url, user, password);
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT s.StockItemID, h.QuantityOnHand, StockItemName FROM stockitems s JOIN stockitemholdings h ON s.StockItemID = h.StockItemID")) {
+             ResultSet rs = stmt.executeQuery("SELECT h.StockItemLocation, s.StockItemID, h.QuantityOnHand, StockItemName FROM stockitems s JOIN stockitemholdings h ON s.StockItemID = h.StockItemID")) {
 
             ResultSetMetaData rsmd = rs.getMetaData();
             int columnCount = rsmd.getColumnCount();
@@ -50,11 +50,7 @@ public class Database {
                 Object[] row = new Object[4]; //4 is het aantal kolommen dit staat vast
 
                 for (int i = 1; i <= 4; i++) {
-                    if(i == 1){
-                        row[0] = "DUMMY DATA";
-                    }else {
-                        row[i - 1] = rs.getObject(i - 1);
-                    }
+                    row[i - 1] = rs.getObject(i);
                 }
                 rows.add(row);
             }
