@@ -84,14 +84,26 @@ public class Database {
         return rows.toArray(new Object[0][]);
     }
 
-//    public void addStockItem(int StockItemID, int QuantityOnHand, String Comments) {
-//        try (Connection conn = DriverManager.getConnection(url, user, password);
-//             Statement stmt = conn.createStatement();
-//             ResultSet rs = stmt.executeQuery("SELECT o.OrderId, o.CustomerID, SUM(l.Quantity) AS TotalQuantity, o.Comments FROM orders o JOIN orderlines l ON o.OrderID = l.OrderID GROUP BY o.OrderId, o.CustomerID, o.Comments")) {
-//
-//
-//        } catch (SQLException e) {
-//            System.out.println("Error fetching order items");
-//        }
-//    } NOG NIET VOLTOOID :)(:
+    public void addStockItem(String Productnaam, int QuantityOnHand, String locatie) {
+        try (Connection conn = DriverManager.getConnection(url, user, password)) {
+            // Query voor het toevoegen van een rij aan de tabel 'stockitems'
+            String queryStockItems = "INSERT INTO stockitems (Productnaam, locatie) VALUES (?, ?)";
+            try (PreparedStatement pstmt = conn.prepareStatement(queryStockItems)) {
+                pstmt.setString(1, Productnaam);
+                pstmt.setString(2, locatie);
+                pstmt.executeUpdate();
+            }
+
+            // Query voor het toevoegen van een rij aan de tabel 'stockitemholdings'
+            String queryStockItemHoldings = "INSERT INTO stockitemholdings (Productnaam, QuantityOnHand) VALUES (?, ?)";
+            try (PreparedStatement pstmt = conn.prepareStatement(queryStockItemHoldings)) {
+                pstmt.setString(1, Productnaam);
+                pstmt.setInt(2, QuantityOnHand);
+                pstmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            System.out.println("Toevoegen van Artikel is mislukt");
+        }
+    }
+
 }

@@ -87,6 +87,7 @@ public class ArtikelDialog extends JDialog implements ActionListener{
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == JBok){
             this.isOk = true;
+
         }
         setVisible(false);
     }
