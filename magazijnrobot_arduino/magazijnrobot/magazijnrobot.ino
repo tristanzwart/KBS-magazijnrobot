@@ -46,6 +46,7 @@ void loop() {
   // eenmaalknopindrukken();
 
   naarbestemming(-1200);
+  checkEindebaan();
   
 }
 
@@ -192,4 +193,13 @@ void calibratie(){
 
 }
 
+void checkEindebaan(){
+  if(digitalRead(swrechts)){
+    naarRechts(255);
+  }
+
+  if(digitalRead(swlinks)){
+    naarRechts(255);
+  }
+}
 

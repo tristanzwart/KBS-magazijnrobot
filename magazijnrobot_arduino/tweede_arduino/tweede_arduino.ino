@@ -66,6 +66,7 @@ void uitlezenJoystick(){
 
 void loop() {
 //naarbestemming(1500);
+checkEindebaan();
 Serial.println(pos);
   //naarbestemming(2500);
   // if (Serial.available() > 0) {
@@ -184,5 +185,15 @@ void calibratie(){
   delay(1000);
   pos= 0;
 
+}
+
+void checkEindebaan(){
+  if(digitalRead(swonder)){
+    naarBoven(255);
+  }
+
+  if(digitalRead(swboven)){
+    naarBeneden(150);
+  }
 }
 
