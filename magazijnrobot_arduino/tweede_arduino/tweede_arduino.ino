@@ -35,6 +35,7 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(ENCA),leesEncoder,RISING);
 
   calibratie();
+
   
 }
 void uitlezenJoystick(){
@@ -64,8 +65,9 @@ void uitlezenJoystick(){
 } 
 
 void loop() {
-
-  naarbestemming(-1200);
+//naarbestemming(1500);
+Serial.println(pos);
+  //naarbestemming(2500);
   // if (Serial.available() > 0) {
   //   String received = Serial.readString();
   //   Serial.print("Ontvangen: ");
@@ -130,8 +132,8 @@ void naarbestemming(int target){
   if( pwr > 255 ){
     pwr = 255;
   }
-  if(pwr < 90 && pwr >0){
-    pwr= 90;
+  if(pwr < 210 && pwr >0){
+    pwr= 210;
   }
 
   // motor direction
@@ -158,10 +160,10 @@ void leesEncoder(){
   int b = digitalRead(ENCB);
   //Serial.println(b);
   if(b>0){
-    pos++;
+    pos--;
   }
   else{
-    pos--;
+    pos++;
 
   }
 }
@@ -175,8 +177,11 @@ void setMotor(int dir, int pwm, int pwmpin, int dirpin){
 void calibratie(){
   //Beweeg de robot helemaal naar rechts totdat de schakelaar wordt ingedrukt
   while(!digitalRead(swonder)){
-    naarBeneden(255);
+    naarBeneden(100);
+    
   }
+  stop();
+  delay(1000);
   pos= 0;
 
 }
