@@ -45,7 +45,7 @@ void loop() {
   
   // eenmaalknopindrukken();
 
-  naarbestemming(-1200);
+  naarbestemming(-3000);
   checkEindebaan();
   
 }
@@ -199,7 +199,7 @@ void checkEindebaan(){
   }
 
   if(digitalRead(swlinks)){
-    naarRechts(255);
+    naarLinks(255);
   }
 }
 
