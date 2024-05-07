@@ -1,3 +1,6 @@
+#define swboven 12
+#define swonder 6
+
 bool voor = false;
 int VRY_PIN = A3;
 
@@ -16,6 +19,10 @@ float  eintergral = 0;
 
 void setup() {
   Serial.begin(9600); // Start de seriële communicatie op 9600 baud
+
+  pinMode(swboven, INPUT_PULLUP);
+  pinMode(swonder, INPUT_PULLUP);
+
   pinMode(ENCA,INPUT);
   pinMode(ENCB,INPUT_PULLUP);
 
@@ -27,6 +34,7 @@ void setup() {
 
   attachInterrupt(digitalPinToInterrupt(ENCA),leesEncoder,RISING);
 
+  calibratie();
   
 }
 void uitlezenJoystick(){
@@ -57,7 +65,7 @@ void uitlezenJoystick(){
 
 void loop() {
 
-  naarbestemming(1200);
+  naarbestemming(-1200);
   // if (Serial.available() > 0) {
   //   String received = Serial.readString();
   //   Serial.print("Ontvangen: ");
@@ -164,4 +172,12 @@ void setMotor(int dir, int pwm, int pwmpin, int dirpin){
   analogWrite(pwmpin, pwm);
 }
 
+void calibratie(){
+  //Beweeg de robot helemaal naar rechts totdat de schakelaar wordt ingedrukt
+  while(!digitalRead(swonder)){
+    naarBeneden(255);
+  }
+  pos= 0;
+
+}
 

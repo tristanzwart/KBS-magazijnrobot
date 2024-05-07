@@ -1,3 +1,6 @@
+#define swrechts 12
+#define swlinks 6
+
 
 int pwmPinLinksRechts = 11;
 int directionPinLinksRechts = 13;
@@ -19,6 +22,8 @@ bool laasteknopstatus= false;
 
 
 void setup() {
+  pinMode(swrechts, INPUT_PULLUP);
+  pinMode(swlinks, INPUT_PULLUP);
 
   pinMode(ENCA,INPUT);
   pinMode(ENCB,INPUT_PULLUP);
@@ -31,7 +36,7 @@ void setup() {
   pinMode(2, INPUT);
   pinMode(knop, INPUT_PULLUP);
 
-
+  calibratie();
 
 }
 
@@ -177,5 +182,14 @@ void setMotor(int dir, int pwm, int pwmpin, int dirpin){
   digitalWrite(dirpin, dir);
   analogWrite(pwmpin, pwm);
   }
+
+void calibratie(){
+  //Beweeg de robot helemaal naar rechts totdat de schakelaar wordt ingedrukt
+  while(!digitalRead(swrechts)){
+    naarLinks(255);
+  }
+  pos= 0;
+
+}
 
 
