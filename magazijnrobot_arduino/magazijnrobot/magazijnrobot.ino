@@ -1,11 +1,10 @@
-int pwmPinUpDown = 3;
-int directionPinUpDown = 12;
 
 int pwmPinLinksRechts = 11;
 int directionPinLinksRechts = 13;
 
+
 int VRX_PIN =  A2; // Arduino pin connected to VRX pin
-int VRY_PIN = A3 ;// Arduino pin connected to VRY pin
+// Arduino pin connected to VRY pin
 
 int knop =4;
 
@@ -13,8 +12,7 @@ bool laasteknopstatus= false;
 
 
 void setup() {
-  pinMode(pwmPinUpDown, OUTPUT);
-  pinMode(directionPinUpDown, OUTPUT);
+  
   pinMode(pwmPinLinksRechts, OUTPUT);
   pinMode(directionPinLinksRechts, OUTPUT);
   Serial.begin(9600);
@@ -58,8 +56,8 @@ void knopingedrukt(){
 
 
 void uitlezenJoystick(){
+ 
   int xValue = analogRead(VRX_PIN);
-  int yValue = analogRead(VRY_PIN);
 
   if(xValue < 500){
     stop();
@@ -71,16 +69,6 @@ void uitlezenJoystick(){
     stop();
     
     naarLinks(255);         //het naar links bewegen van de joystick
-  }
-  else if (yValue < 490){
-    stop();
-    naarBoven(255);         // het naar boven bewegen van joystick
-
-  }
-  else if(yValue >520){
-    stop();
-    naarBeneden(110);       //het naar beneden bewegen van de joystick
-
   }
   else{
     stop();
@@ -95,19 +83,9 @@ void uitlezenJoystick(){
 
 // bewegen robot met pwm meegeven
 void stop(){
-  analogWrite(pwmPinUpDown, 0);
+  
   analogWrite(pwmPinLinksRechts, 0);   
 
-}
-
-void naarBoven(int pwm){
-  digitalWrite(directionPinUpDown, LOW);
-  analogWrite(pwmPinUpDown, pwm);
-}
-
-void naarBeneden(int pwm){
-  digitalWrite(directionPinUpDown, HIGH);
-  analogWrite(pwmPinUpDown, pwm);
 }
 
 void naarLinks(int pwm){
