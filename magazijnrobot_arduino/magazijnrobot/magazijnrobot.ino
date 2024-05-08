@@ -45,9 +45,11 @@ void loop() {
 
   // eenmaalknopindrukken();
 
-  //checkEindebaan();
+  checkEindebaan();
   communicatieHMI();
   naarbestemming(bestemming);
+  
+
 }
 
 void eenmaalknopindrukken(){
@@ -173,6 +175,8 @@ void calibratie(){
   while(!digitalRead(swrechts)){
     naarLinks(255);
   }
+  stop();
+  delay(1000);
   pos= 0;
 
 }

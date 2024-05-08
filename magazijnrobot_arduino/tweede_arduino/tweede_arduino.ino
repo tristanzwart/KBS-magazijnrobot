@@ -67,7 +67,7 @@ void uitlezenJoystick(){
 void loop() {
   //naarbestemming(1500);
   checkEindebaan();
-  Serial.println(pos);
+  // Serial.println(pos);
 
   communicatieHMI();
   naarbestemming(bestemming);
