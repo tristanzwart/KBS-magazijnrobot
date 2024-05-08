@@ -2,8 +2,8 @@ import com.fazecast.jSerialComm.*;
 
 public class ArduinoCom {
 
-    public void verstuurData(String data){
-        SerialPort comPort = SerialPort.getCommPort("/dev/ttyACM0"); // Gebruikt de Linux seriële poort. Voor windows gebruik COM poort
+    public void verstuurData(String data, String comPoort){
+        SerialPort comPort = SerialPort.getCommPort(comPoort); // Gebruikt de Linux seriële poort. Voor windows gebruik COM poort
         comPort.setBaudRate(9600);
         if (!comPort.openPort()) {
             System.out.println("Kan poort niet openen!");
@@ -26,6 +26,7 @@ public class ArduinoCom {
             byte[] readBuffer = new byte[comPort.bytesAvailable()];
             int numRead = comPort.readBytes(readBuffer, readBuffer.length);
             System.out.println("Ontvangen van Arduino: " + new String(readBuffer, 0, numRead));
+
         } catch (InterruptedException e) {
             System.out.println("Een fout opgetreden tijdens het wachten: " + e.getMessage());
         } catch (Exception e) {
@@ -33,4 +34,5 @@ public class ArduinoCom {
         }
         comPort.closePort();
     }
+
 }

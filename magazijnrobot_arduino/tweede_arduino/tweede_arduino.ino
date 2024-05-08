@@ -15,7 +15,7 @@ long prevT= 0;
 float eprev = 0;
 float  eintergral = 0;
 
-
+int bestemming;
 
 void setup() {
   Serial.begin(9600); // Start de seriële communicatie op 9600 baud
@@ -65,37 +65,16 @@ void uitlezenJoystick(){
 } 
 
 void loop() {
-//naarbestemming(1500);
-checkEindebaan();
-Serial.println(pos);
-  //naarbestemming(2500);
-  // if (Serial.available() > 0) {
-  //   String received = Serial.readString();
-  //   Serial.print("Ontvangen: ");
-  //   Serial.println(received);
-    //uitlezenJoystick();
+  //naarbestemming(1500);
+  checkEindebaan();
+  Serial.println(pos);
 
-  
-  //   while (Serial.available() > 0) {    // het ontvangen van het singnaal om naar voren te gaan
-  //   char c = Serial.read();  // Lees één karakter
-  //   if(c == 'g'){
-  //     if(voor){
-  //       digitalWrite(12,HIGH);    // checken of de zas vooruit staat
-  //       voor = false ;
-  //     }
-  //     else{
-  //       digitalWrite(12,LOW);
-  //       voor= true;
-  //     }
-  //     Serial.println(c);
-      
-  //     analogWrite(3, 100);     // het aan en uit zetten van de z as 
-  //     delay(3000);
-  //     analogWrite(3, 0);
-  //     c= 'h';
-  //   }         // Druk het karakter af
-  // }
-  }
+  communicatieHMI();
+  naarbestemming(bestemming);
+
+}
+
+
 void stop(){
   analogWrite(pwmPinBovenOnder, 0);
   
@@ -133,8 +112,8 @@ void naarbestemming(int target){
   if( pwr > 255 ){
     pwr = 255;
   }
-  if(pwr < 210 && pwr >0){
-    pwr= 210;
+  if(pwr < 255 && pwr >0){
+    pwr= 255;
   }
 
   // motor direction
@@ -150,10 +129,10 @@ void naarbestemming(int target){
   // store previous error
   eprev = e;
 
-  Serial.print(target);
-  Serial.print(" ");
-  Serial.print(pos);
-  Serial.println();
+  // Serial.print(target);
+  // Serial.print(" ");
+  // Serial.print(pos);
+  // Serial.println();
 
 
 }
@@ -194,6 +173,14 @@ void checkEindebaan(){
 
   if(digitalRead(swboven)){
     naarBeneden(150);
+  }
+}
+
+void communicatieHMI() {
+  if (Serial.available() > 0) {
+    String data = Serial.readStringUntil('\n'); // Lees de binnenkomende data tot newline
+//     serial.println() //om data terug te sturen naar java.
+    bestemming = data.toInt();
   }
 }
 
