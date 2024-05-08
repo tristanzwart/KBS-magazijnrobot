@@ -189,17 +189,28 @@ void calibratie(){
   while(!digitalRead(swrechts)){
     naarLinks(255);
   }
+  stop();
+  delay(1000);
   pos= 0;
 
+  while(digitalRead(swrechts)){
+    naarRechts(255);
+  }
+  stop();
 }
 
 void checkEindebaan(){
   if(digitalRead(swrechts)){
-    naarRechts(255);
+    calibratie();
+    //Terug naar recths totdat de switch weer uit is.
+
+
+
   }
 
   if(digitalRead(swlinks)){
-    naarLinks(255);
+    //Als deze switch wordt aangeraakt dan is er iets fout gegaan en moet er worden ge her calibreerd
+    calibratie();
   }
 }
 

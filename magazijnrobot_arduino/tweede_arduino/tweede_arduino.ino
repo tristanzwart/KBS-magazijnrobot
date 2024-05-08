@@ -1,6 +1,8 @@
 #define swboven 12
 #define swonder 6
 
+#define irsensor A5
+
 bool voor = false;
 int VRY_PIN = A3;
 
@@ -185,15 +187,33 @@ void calibratie(){
   delay(1000);
   pos= 0;
 
+  while(digitalRead(swonder)){
+    naarBoven(255);
+  }
+  stop();
+
 }
 
 void checkEindebaan(){
   if(digitalRead(swonder)){
-    naarBoven(255);
+    calibratie();
+    
+    
   }
 
   if(digitalRead(swboven)){
-    naarBeneden(150);
+    calibratie();
   }
 }
 
+
+int getVorkAfstand(){
+  // 5v
+  float volts = analogRead(irsensor)*0.0048828125;  // value from sensor * (5/1024)
+  int distance = 13*pow(volts, -1); // worked out from datasheet graph
+  delay(1000); // slow down serial port 
+  
+  
+  return(distance);   // return de afstand in cm
+  
+}
