@@ -191,11 +191,18 @@ void calibratie(){
 
 void checkEindebaan(){
   if(digitalRead(swonder)){
+    calibratie();
+    while(digitalRead(swonder)){
     naarBoven(255);
+    }
+    stop();
   }
 
   if(digitalRead(swboven)){
-    naarBeneden(150);
+    while(digitalRead(swboven)){
+      naarBeneden(150);
+    }
+    calibratie();
   }
 }
 
