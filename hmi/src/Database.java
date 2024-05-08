@@ -106,4 +106,19 @@ public class Database {
         }
     }
 
+    public static void updateStockItem(int stockItemId, int newQuantityOnHand) {
+        try (Connection conn = DriverManager.getConnection(url, user, password)) {
+            // Query voor het bijwerken van de 'QuantityOnHand' van een specifiek 'StockItemID'
+            String query = "UPDATE stockitemholdings SET QuantityOnHand = ? WHERE StockItemID = ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                pstmt.setInt(1, newQuantityOnHand);
+                pstmt.setInt(2, stockItemId);
+                pstmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            System.out.println("Bijwerken van Artikel is mislukt");
+        }
+    }
+
+
 }

@@ -1,6 +1,11 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.table.TableModel;
+
+
 
 public class GUI extends JFrame{
     private String huidigScherm;
@@ -27,6 +32,27 @@ public class GUI extends JFrame{
 
         // Set selection mode
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        //Onderstaande zorgt ervoor dat de knop word getoond als er iets geselecteerd word
+        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (table.getSelectedRow() != -1) {
+                    bottomBar.setArtikelAanpassenStatus(true);
+                } else {
+                    bottomBar.setArtikelAanpassenStatus(false);
+                }
+                if (!e.getValueIsAdjusting() && table.getSelectedRow() != -1) {
+                    int selectedRow = table.getSelectedRow();
+                    TableModel model = table.getModel();
+
+                    // Haal het artikelnummer op van de geselecteerde rij
+                    bottomBar.setHuidigeGeselecteerdeArtikel(Integer.parseInt(model.getValueAt(selectedRow, 1).toString()));
+                    bottomBar.setHuidigeVoorraad(Integer.parseInt(model.getValueAt(selectedRow, 2).toString()));
+
+
+                }
+            }
+        });
 
         // Create scroll pane and add table to it
         scrollPane = new JScrollPane(table);
@@ -90,7 +116,7 @@ public class GUI extends JFrame{
 
         bottomBar.removeAll();
         if(schermNummer == 1) {
-            bottomBar.addButton("Artikel toevoegen");
+//            bottomBar.addButton("Artikel toevoegen");
             bottomBar.addButton("Artikel aanpassen");
             bottomBar.addButton("Verversen");
 
@@ -120,11 +146,12 @@ public void updateOrderTabelData() {
     model.setDataVector(data, columnNames);
 }
 
-public void toonArtikelToevoegenDialog(){
-        artikelDialog.toonDialog();
-    }
-
     public String getHuidigScherm(){
         return huidigScherm;
     }
+
+
+
 }
+
+
