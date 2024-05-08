@@ -1,11 +1,20 @@
-int pwmPinUpDown = 3;
-int directionPinUpDown = 12;
+#define swrechts 12
+#define swlinks 6
+
 
 int pwmPinLinksRechts = 11;
 int directionPinLinksRechts = 13;
 
+int ENCA = 2;
+int ENCB =7;
+
+int pos = 0;
+long prevT= 0;
+float eprev = 0;
+float  eintergral = 0;
+
 int VRX_PIN =  A2; // Arduino pin connected to VRX pin
-int VRY_PIN = A3 ;// Arduino pin connected to VRY pin
+// Arduino pin connected to VRY pin
 
 int knop =4;
 
@@ -13,22 +22,31 @@ bool laasteknopstatus= false;
 
 
 void setup() {
-  pinMode(pwmPinUpDown, OUTPUT);
-  pinMode(directionPinUpDown, OUTPUT);
+  pinMode(swrechts, INPUT_PULLUP);
+  pinMode(swlinks, INPUT_PULLUP);
+
+  pinMode(ENCA,INPUT);
+  pinMode(ENCB,INPUT_PULLUP);
+
+  attachInterrupt(digitalPinToInterrupt(ENCA),leesEncoder,RISING);
+  
   pinMode(pwmPinLinksRechts, OUTPUT);
   pinMode(directionPinLinksRechts, OUTPUT);
   Serial.begin(9600);
   pinMode(2, INPUT);
   pinMode(knop, INPUT_PULLUP);
 
-
+  calibratie();
 
 }
 
 void loop() {
-  uitlezenJoystick(); // leest joystick uit en beweeegt hiermee de robot
-  //eenmaalknopindrukken();
-  eenmaalknopindrukken();
+  // uitlezenJoystick(); // leest joystick uit en beweeegt hiermee de robot
+  
+  // eenmaalknopindrukken();
+
+  naarbestemming(-3000);
+  checkEindebaan();
   
 }
 
@@ -58,8 +76,8 @@ void knopingedrukt(){
 
 
 void uitlezenJoystick(){
+ 
   int xValue = analogRead(VRX_PIN);
-  int yValue = analogRead(VRY_PIN);
 
   if(xValue < 500){
     stop();
@@ -71,16 +89,6 @@ void uitlezenJoystick(){
     stop();
     
     naarLinks(255);         //het naar links bewegen van de joystick
-  }
-  else if (yValue < 490){
-    stop();
-    naarBoven(255);         // het naar boven bewegen van joystick
-
-  }
-  else if(yValue >520){
-    stop();
-    naarBeneden(110);       //het naar beneden bewegen van de joystick
-
   }
   else{
     stop();
@@ -95,19 +103,9 @@ void uitlezenJoystick(){
 
 // bewegen robot met pwm meegeven
 void stop(){
-  analogWrite(pwmPinUpDown, 0);
+  
   analogWrite(pwmPinLinksRechts, 0);   
 
-}
-
-void naarBoven(int pwm){
-  digitalWrite(directionPinUpDown, LOW);
-  analogWrite(pwmPinUpDown, pwm);
-}
-
-void naarBeneden(int pwm){
-  digitalWrite(directionPinUpDown, HIGH);
-  analogWrite(pwmPinUpDown, pwm);
 }
 
 void naarLinks(int pwm){
@@ -119,3 +117,89 @@ void naarRechts(int pwm){
   digitalWrite(directionPinLinksRechts, HIGH);
   analogWrite(pwmPinLinksRechts, pwm);
 }
+
+void naarbestemming(int target){
+ float kp = 1; //PID algoritme variabelen
+ float kd= 0.025;
+ float ki= 0;
+
+ long currentTime = micros();
+
+ float deltaT = ((float)(currentTime - prevT))/ 1.0e6;
+ prevT = currentTime;
+
+ int e = pos- target;
+
+ float dedt = (e-eprev)/ (deltaT);
+ 
+ eintergral = eintergral = e*deltaT;
+
+ float u = kp*e + kd*dedt + ki*eintergral;
+
+ float pwr = fabs(u);
+  if( pwr > 255 ){
+    pwr = 255;
+  }
+  if(pwr < 90 && pwr >0){
+    pwr= 90;
+  }
+
+  // motor direction
+  int dir = 1;
+  if(u<0){
+    dir = 0;
+  }
+
+  // signal the motor
+  setMotor(dir,pwr,pwmPinLinksRechts,directionPinLinksRechts);
+
+
+  // store previous error
+  eprev = e;
+
+  Serial.print(target);
+  Serial.print(" ");
+  Serial.print(pos);
+  Serial.println();
+
+
+}
+
+void leesEncoder(){
+  int b = digitalRead(ENCB);
+  //Serial.println(b);
+  if(b>0){
+    pos++;
+    
+  }
+  else{
+    pos--;
+
+  }
+}
+
+
+void setMotor(int dir, int pwm, int pwmpin, int dirpin){
+  digitalWrite(dirpin, dir);
+  analogWrite(pwmpin, pwm);
+  }
+
+void calibratie(){
+  //Beweeg de robot helemaal naar rechts totdat de schakelaar wordt ingedrukt
+  while(!digitalRead(swrechts)){
+    naarLinks(255);
+  }
+  pos= 0;
+
+}
+
+void checkEindebaan(){
+  if(digitalRead(swrechts)){
+    naarRechts(255);
+  }
+
+  if(digitalRead(swlinks)){
+    naarLinks(255);
+  }
+}
+
