@@ -127,6 +127,10 @@ public class GUI extends JFrame{
         bottomBar.revalidate();
     }
 
+    public void giveSideFeedback(String feedback) {
+        sideBar.giveFeedback(feedback);
+    }
+
 
     public void updateVoorraadTableData() {
     Object[][] data = db.getStockItems();
@@ -134,6 +138,7 @@ public class GUI extends JFrame{
     String[] columnNames = {"Locatie", "Artikelnummer", "Op vooraad", "Artikelnaam"};
     DefaultTableModel model = (DefaultTableModel) table.getModel();
     model.setDataVector(data, columnNames);
+    giveSideFeedback("");
 }
 
 
@@ -144,6 +149,7 @@ public void updateOrderTabelData() {
     String[] columnNames = {"Ordernummer", "Klantennummer", "Aantal producten", "Opmerkingen"};
     DefaultTableModel model = (DefaultTableModel) table.getModel();
     model.setDataVector(data, columnNames);
+    giveSideFeedback("");
 }
 
     public String getHuidigScherm(){

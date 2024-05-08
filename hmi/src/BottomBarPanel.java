@@ -76,6 +76,7 @@ public class BottomBarPanel extends JPanel implements ActionListener {
                 if (artikelDialog.getBeginVoorraad() != artikelDialog.getVooraad()) {
                     if (artikelDialog.getVooraad() == -99999999) {
                         System.out.println("ongeldige invoer");
+                        gui.giveSideFeedback("Ongeldige invoer!");
                     } else {
                         Database.updateStockItem(HuidigeGeselecteerdeArtikel, artikelDialog.getVooraad());
                         System.out.println("updated using following parameters: " + HuidigeGeselecteerdeArtikel + artikelDialog.getVooraad());
