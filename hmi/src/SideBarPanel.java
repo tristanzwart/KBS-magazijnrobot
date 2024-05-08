@@ -8,6 +8,8 @@ public class SideBarPanel extends JPanel implements ActionListener {
     private JButton orders;
     private JButton voorraad;
 
+    private JLabel feedback;
+
     public SideBarPanel(GUI gui){
         this.gui = gui;
 
@@ -18,6 +20,7 @@ public class SideBarPanel extends JPanel implements ActionListener {
         orders.addActionListener(this);
         voorraad = new JButton("Voorraad");
         voorraad.addActionListener(this);
+        feedback = new JLabel();
 
         Dimension buttonSize = new Dimension(90, 26);
         orders.setPreferredSize(buttonSize);
@@ -25,11 +28,14 @@ public class SideBarPanel extends JPanel implements ActionListener {
 
         add(orders);
         add(voorraad);
+        add(feedback);
 
         setVisible(true);
     }
 
-
+    public void giveFeedback(String feedbackinput) {
+        this.feedback.setText(feedbackinput);
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
