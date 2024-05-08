@@ -45,8 +45,8 @@ void loop() {
   
   // eenmaalknopindrukken();
 
-  naarbestemming(-3000);
   checkEindebaan();
+  communicatieHMI();
   
 }
 
@@ -202,4 +202,13 @@ void checkEindebaan(){
     naarLinks(255);
   }
 }
+
+void communicatieHMI() {
+  if (Serial.available() > 0) {
+    String data = Serial.readStringUntil('\n'); // Lees de binnenkomende data tot newline
+//     serial.println() //om data terug te sturen naar java.
+    naarbestemming(data.toInt());
+  }
+}
+
 
