@@ -17,8 +17,8 @@ int VRX_PIN =  A2; // Arduino pin connected to VRX pin
 // Arduino pin connected to VRY pin
 
 int knop =4;
-
 bool laasteknopstatus= false;
+int bestemming;
 
 
 void setup() {
@@ -29,7 +29,7 @@ void setup() {
   pinMode(ENCB,INPUT_PULLUP);
 
   attachInterrupt(digitalPinToInterrupt(ENCA),leesEncoder,RISING);
-  
+
   pinMode(pwmPinLinksRechts, OUTPUT);
   pinMode(directionPinLinksRechts, OUTPUT);
   Serial.begin(9600);
@@ -42,14 +42,15 @@ void setup() {
 
 void loop() {
   // uitlezenJoystick(); // leest joystick uit en beweeegt hiermee de robot
-  
+
   // eenmaalknopindrukken();
 
-  naarbestemming(-3000);
   checkEindebaan();
+  communicatieHMI();
+  naarbestemming(bestemming);
   
-}
 
+}
 
 void eenmaalknopindrukken(){
   bool knop1 = knopuitlezen();
@@ -59,9 +60,6 @@ void eenmaalknopindrukken(){
   laasteknopstatus = knop1;
 }
 
-
-
-
 bool knopuitlezen(){
   bool knopWaarde = digitalRead(knop);
   delay(50);
@@ -70,42 +68,32 @@ bool knopuitlezen(){
 }
 
 void knopingedrukt(){
-  Serial.print('g');      //versturen van een signaal 
+  Serial.print('g');      //versturen van een signaal
 }
 
-
-
 void uitlezenJoystick(){
- 
+
   int xValue = analogRead(VRX_PIN);
 
   if(xValue < 500){
     stop();
     naarRechts(255);      //het naar rechts bewegen van de joystick
-    
-    
+
   }
   else if(xValue> 540){
     stop();
-    
+
     naarLinks(255);         //het naar links bewegen van de joystick
   }
   else{
     stop();
   }
 
-
-  
-  
-} 
-
-
+}
 
 // bewegen robot met pwm meegeven
 void stop(){
-  
-  analogWrite(pwmPinLinksRechts, 0);   
-
+  analogWrite(pwmPinLinksRechts, 0);
 }
 
 void naarLinks(int pwm){
@@ -131,7 +119,7 @@ void naarbestemming(int target){
  int e = pos- target;
 
  float dedt = (e-eprev)/ (deltaT);
- 
+
  eintergral = eintergral = e*deltaT;
 
  float u = kp*e + kd*dedt + ki*eintergral;
@@ -157,12 +145,10 @@ void naarbestemming(int target){
   // store previous error
   eprev = e;
 
-  Serial.print(target);
-  Serial.print(" ");
-  Serial.print(pos);
-  Serial.println();
-
-
+  // Serial.print(target);
+  // Serial.print(" ");
+  // Serial.print(pos);
+  // Serial.println();
 }
 
 void leesEncoder(){
@@ -170,7 +156,7 @@ void leesEncoder(){
   //Serial.println(b);
   if(b>0){
     pos++;
-    
+
   }
   else{
     pos--;
@@ -213,4 +199,13 @@ void checkEindebaan(){
     calibratie();
   }
 }
+
+void communicatieHMI() {
+  if (Serial.available() > 0) {
+    String data = Serial.readStringUntil('\n'); // Lees de binnenkomende data tot newline
+//     serial.println() //om data terug te sturen naar java.
+    bestemming = data.toInt();
+  }
+}
+
 
