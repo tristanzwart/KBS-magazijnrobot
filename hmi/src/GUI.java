@@ -31,6 +31,8 @@ public class GUI extends JFrame{
         String[] columnNames = {};
 
         table = new JTable(new DefaultTableModel(data, columnNames));
+        table.setDefaultEditor(Object.class, null);
+
 
         // Set selection mode
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
