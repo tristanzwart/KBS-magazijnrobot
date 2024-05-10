@@ -11,8 +11,10 @@ public class BottomBarPanel extends JPanel implements ActionListener {
     private JButton artikelToevoegen;
     private JButton artikelAanpassen;
     private JButton verversen;
+    private JButton bekijken;
 
     private int HuidigeGeselecteerdeArtikel;
+    private int HuidigeGeselecteerdeOrder;
     private int HuidigeVoorraad;
 
     public BottomBarPanel(GUI gui, ArtikelDialog artikelDialog){
@@ -28,6 +30,8 @@ public class BottomBarPanel extends JPanel implements ActionListener {
         artikelAanpassen.addActionListener(this);
         verversen = new JButton("Verversen");
         verversen.addActionListener(this);
+        bekijken =new JButton("Bekijken");
+        bekijken.addActionListener(this);
 
 
 
@@ -45,7 +49,11 @@ public class BottomBarPanel extends JPanel implements ActionListener {
             add(artikelAanpassen);
         } else if (buttonName.equals("Verversen")) {
             add(verversen);
-        }else {
+        }else if(buttonName.equals("bekijken")){
+            add(bekijken);
+
+        }
+        else {
             //Knop bestaat niet
             System.out.println("Error: Knop bestaat niet");
         }
@@ -54,6 +62,9 @@ public class BottomBarPanel extends JPanel implements ActionListener {
 
     public void setArtikelAanpassenStatus (boolean status) {
         artikelAanpassen.setVisible(status);
+    }
+    public void setOrderAanpassenStatus (boolean status) {
+        bekijken.setVisible(status);
     }
 
     @Override
@@ -88,6 +99,10 @@ public class BottomBarPanel extends JPanel implements ActionListener {
 
             //TODO: Refresh table
             
+        } else if (e.getSource() == bekijken) {
+            System.out.println("mooi");
+            System.out.println(HuidigeGeselecteerdeOrder);
+            OrderDialog orderdia = new OrderDialog(gui, true, HuidigeGeselecteerdeOrder);
         }
     }
 
@@ -97,5 +112,9 @@ public class BottomBarPanel extends JPanel implements ActionListener {
 
     public void setHuidigeVoorraad(int huidigeVoorraad) {
         HuidigeVoorraad = huidigeVoorraad;
+    }
+    public void setHuidigeGeselecteerdeOrder(int getHuidigeGeselecteerdeOrder) {
+
+        this.HuidigeGeselecteerdeOrder = getHuidigeGeselecteerdeOrder;
     }
 }

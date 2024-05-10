@@ -36,6 +36,61 @@ public class Database {
         }
     }
     */
+    public String[] getorderinfo(int orderid) {
+        try (Connection conn = DriverManager.getConnection(url, user, password)) {
+            String[] info = new String[3];
+            String statement = "SELECT OrderID, CustomerID, OrderDate FROM orders WHERE OrderID= ?;";
+            PreparedStatement mystmt = conn.prepareStatement(statement);
+            mystmt.setInt(1, orderid);
+            ResultSet myres = mystmt.executeQuery();
+
+            if (myres.next()) {
+                String orderID = myres.getString("OrderID");
+                String customerID = myres.getString("CustomerID");
+                String orderDate = myres.getString("OrderDate");
+
+
+                info[0] = orderID;
+                info[1] = customerID;
+                info[2] = orderDate;
+            } else {
+
+                System.out.println("No order found for OrderID: " + orderid);
+            }
+
+            return info;
+        } catch (SQLException e) {
+
+            System.out.println("ophalen order info is niet gelukt");
+            return null;
+        }
+    }
+    public Object[][] getOrderlines(int OrderID) {
+        List<Object[]> rows = new ArrayList<>();
+        try (Connection conn = DriverManager.getConnection(url, user, password);
+             PreparedStatement pstmt = conn.prepareStatement("SELECT StockItemID, Description, Quantity FROM orderlines WHERE OrderID = ?")) {
+            pstmt.setInt(1, OrderID); // Set the OrderID parameter in the prepared statement
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                int index=1;
+                while (rs.next()) {
+                    Object[] row = new Object[4]; // Number of columns is 3
+                    if(row[0]== null){
+                        row[0]= index;
+                        index++;
+                    }
+
+                    for (int i = 1; i <= 3; i++) {
+                        row[i] = rs.getObject(i);
+                    }
+                    rows.add(row);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching order lines: " + e.getMessage());
+        }
+        return rows.toArray(new Object[0][]);
+    }
 
     public Object[][] getStockItems() {
         List<Object[]> rows = new ArrayList<>();
