@@ -5,6 +5,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 public class OrderDialog extends JDialog implements ActionListener {
     private JLabel ordernummer, klantnummer, aanmaakdatum;
@@ -13,10 +15,13 @@ public class OrderDialog extends JDialog implements ActionListener {
     private Database database;
 
     private JButton saveButton;
-    private JButton cancelButton;
+    private JButton deleteButton;
+    private JButton addButton;
     private JLabel feedbackLabel;
 
     private int OrderID;
+    private Order_ArtikelToevoegenDialog ArtikeltoevoegenDialog;
+    private Bevestigingsdialog bevestigingsdialog = new Bevestigingsdialog();
 
 
     public OrderDialog(JFrame frame, boolean modal, int OrderID){
@@ -84,16 +89,29 @@ public class OrderDialog extends JDialog implements ActionListener {
         tabel = new JTable(model);
         JScrollPane scrollPane = new JScrollPane(tabel);
         add(scrollPane, BorderLayout.CENTER);
+        // zorgt ervoor dat de verwijder knop zichtbaar word.
+        tabel.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                // If a row is selected, make the "Artikel verwijderen" button visible
+                // Otherwise, make it invisible
+                deleteButton.setVisible(!tabel.getSelectionModel().isSelectionEmpty());
+            }
+        });
 
         JPanel buttonPanel = new JPanel();
-        saveButton = new JButton("Opslaan");
+        saveButton = new JButton("Hoeveelheden Opslaan");
         saveButton.addActionListener(this);
         buttonPanel.add(saveButton);
 
-        cancelButton = new JButton("Annuleren");
-        cancelButton.addActionListener(this);
-        buttonPanel.add(cancelButton);
 
+        addButton = new JButton("Artikel Toevoegen");
+        addButton.addActionListener(this);
+        buttonPanel.add(addButton);
+
+        deleteButton = new JButton("Artikel verwijderen");
+        deleteButton.addActionListener(this);
+        deleteButton.setVisible(false);
+        buttonPanel.add(deleteButton);
 
         feedbackLabel = new JLabel("");
         buttonPanel.add(feedbackLabel);
@@ -129,7 +147,17 @@ public class OrderDialog extends JDialog implements ActionListener {
                 for(int i = 0; i < numrows; i++){
                     int orderLineID = Integer.parseInt(model.getValueAt(i, 0).toString());
                     int quantity = Integer.parseInt(model.getValueAt(i, 3).toString());
-                    database.updateOrderLine(this.OrderID, quantity, orderLineID);
+                    if (quantity <= 0) {
+                        if (numrows != 1) {
+                            Database.deleteOrderLine(orderLineID);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "U kunt niet alle artikelen uit een order verwijderen! Aantal van laatste artikel veranderd naar 1.", "Waarschuwing", JOptionPane.WARNING_MESSAGE);
+                            Database.updateOrderLine(this.OrderID, 1, orderLineID);
+                        }
+
+                    } else {
+                        Database.updateOrderLine(this.OrderID, quantity, orderLineID);
+                    }
                 }
                 setVisible(false);
             } else {
@@ -137,10 +165,42 @@ public class OrderDialog extends JDialog implements ActionListener {
             }
 
 
-        } else if (e.getSource() == cancelButton){
-            setVisible(false);
+        } else if (e.getSource() == addButton){
+            feedbackLabel.setText("");
+            ArtikeltoevoegenDialog = new Order_ArtikelToevoegenDialog(OrderID);
+            feedbackLabel.setText(ArtikeltoevoegenDialog.getFeedback());
+
+            //ververs tabel
+            Object[][] rec = database.getOrderlines(OrderID);
+            DefaultTableModel model = (DefaultTableModel) tabel.getModel();
+            model.setDataVector(rec, new String[] { "Orderregel" ,"Artikelnummer", "Artikelbeschrijving", "Hoeveelheid" });
+        } else if (e.getSource() == deleteButton){
+            int selectedRow = tabel.getSelectedRow();
+            if(tabel.getModel().getRowCount() <= 1) {
+                feedbackLabel.setText("U kunt niet alle artikelen verwijderen!");
+            } else {
+                if (selectedRow != -1) { // -1 means no row is selected
+                    int orderLineID = Integer.parseInt(tabel.getValueAt(selectedRow, 0).toString());
+                    bevestigingsdialog.show("Weet u zeker dat u deze regel wil verwijderen?");
+                    if (bevestigingsdialog.antwoord()) {
+                        Database.deleteOrderLine(orderLineID);
+                        feedbackLabel.setText("Artikel verwijderd");
+                    }
+
+                }
+            }
+
+            //ververs tabel
+            Object[][] rec = database.getOrderlines(OrderID);
+            DefaultTableModel model = (DefaultTableModel) tabel.getModel();
+            model.setDataVector(rec, new String[] { "Orderregel" ,"Artikelnummer", "Artikelbeschrijving", "Hoeveelheid" });
         }
     }
+
+
+
+
+
 
 }
 

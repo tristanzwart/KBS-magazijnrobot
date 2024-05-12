@@ -1,6 +1,8 @@
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Database {
     private static String url = "jdbc:mysql://localhost:3306/nerdygadgets";
@@ -184,6 +186,59 @@ public class Database {
             System.out.println("Updaten van Orderline is mislukt!");
         }
     }
+
+    public static void addOrderLine(int OrderID, int Quantity, int StockItemID) {
+        try (Connection conn = DriverManager.getConnection(url, user, password)) {
+            // Toevoegen van orderline
+            String query = "INSERT INTO orderlines (OrderID, StockItemID, Description, PackageTypeID, Quantity, TaxRate, PickedQuantity, LastEditedBy, LastEditedWhen) VALUES (?, ?, (select StockItemName from stockitems where StockItemID = ?), 4, ?, 15.0, 0, 3, ?)";
+            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                pstmt.setInt(1, OrderID);
+                pstmt.setInt(2, StockItemID);
+                pstmt.setInt(3, StockItemID);
+                pstmt.setInt(4, Quantity);
+                LocalDateTime now = LocalDateTime.now();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                String formatDateTime = now.format(formatter);
+                pstmt.setString(5, formatDateTime);
+                pstmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            System.out.println("Adding new order line failed!");
+        }
+    }
+
+    public static void deleteOrderLine(int orderLineID) {
+        try (Connection conn = DriverManager.getConnection(url, user, password)) {
+            // Delete orderline
+            String query = "DELETE FROM orderlines WHERE OrderLineID = ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                pstmt.setInt(1, orderLineID);
+                pstmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            System.out.println("Deleting order line failed!");
+        }
+    }
+
+    public static String getStockItemName(int StockItemID) {
+        String stockItemName = null;
+        try (Connection conn = DriverManager.getConnection(url, user, password)) {
+            String query = "SELECT StockItemName FROM stockitems WHERE StockItemID = ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                pstmt.setInt(1, StockItemID);
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    if (rs.next()) {
+                        stockItemName = rs.getString("StockItemName");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching stock item name");
+        }
+        return stockItemName;
+    }
+
+
 
 
 }
