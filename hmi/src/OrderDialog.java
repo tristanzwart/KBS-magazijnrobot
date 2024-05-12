@@ -3,15 +3,25 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class OrderDialog extends JDialog {
+public class OrderDialog extends JDialog implements ActionListener {
     private JLabel ordernummer, klantnummer, aanmaakdatum;
 
     private JTable tabel;
     private Database database;
 
+    private JButton saveButton;
+    private JButton cancelButton;
+    private JLabel feedbackLabel;
+
+    private int OrderID;
+
+
     public OrderDialog(JFrame frame, boolean modal, int OrderID){
         super(frame, modal);
+        this.OrderID = OrderID;
         database = new Database();
         String[] info = database.getorderinfo(OrderID);
 
@@ -76,14 +86,61 @@ public class OrderDialog extends JDialog {
         add(scrollPane, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel();
-        JButton saveButton = new JButton("Opslaan");
+        saveButton = new JButton("Opslaan");
+        saveButton.addActionListener(this);
         buttonPanel.add(saveButton);
-        JButton cancelButton = new JButton("Annuleren");
+
+        cancelButton = new JButton("Annuleren");
+        cancelButton.addActionListener(this);
         buttonPanel.add(cancelButton);
+
+
+        feedbackLabel = new JLabel("");
+        buttonPanel.add(feedbackLabel);
 
         add(buttonPanel, BorderLayout.SOUTH);
 
         setVisible(true);
     }
+
+    public void actionPerformed(ActionEvent e) {
+        if(e.getSource() == saveButton){
+            if (tabel.isEditing()) {
+                tabel.getCellEditor().stopCellEditing();
+            }
+            DefaultTableModel model = (DefaultTableModel) tabel.getModel();
+            int numrows = model.getRowCount();
+            boolean allRowsValid = true;
+
+            // Eerst controleren of alle rijen geldige waarden hebben
+            for(int i = 0; i < numrows; i++){
+                try {
+                    Integer.parseInt(model.getValueAt(i, 0).toString());
+                    Integer.parseInt(model.getValueAt(i, 3).toString());
+                } catch (NumberFormatException ex) {
+                    allRowsValid = false;
+                    System.out.println("Error: Cell waarde in regel " + (i+1) + " is geen integer.");
+                    break;
+                }
+            }
+
+            // Als alle rijen geldige waarden hebben, dan updaten we de database
+            if(allRowsValid){
+                for(int i = 0; i < numrows; i++){
+                    int orderLineID = Integer.parseInt(model.getValueAt(i, 0).toString());
+                    int quantity = Integer.parseInt(model.getValueAt(i, 3).toString());
+                    database.updateOrderLine(this.OrderID, quantity, orderLineID);
+                }
+                setVisible(false);
+            } else {
+                feedbackLabel.setText("Niet alle regels zijn geldig");
+            }
+
+
+        } else if (e.getSource() == cancelButton){
+            setVisible(false);
+        }
+    }
+
 }
 

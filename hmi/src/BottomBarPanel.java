@@ -103,6 +103,7 @@ public class BottomBarPanel extends JPanel implements ActionListener {
             System.out.println("mooi");
             System.out.println(HuidigeGeselecteerdeOrder);
             OrderDialog orderdia = new OrderDialog(gui, true, HuidigeGeselecteerdeOrder);
+            gui.updateOrderTabelData();
         }
     }
 

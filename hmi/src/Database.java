@@ -7,6 +7,7 @@ public class Database {
     private static String user = "root";
     private static String password = "";
 
+
     public Database() {
 
     }
@@ -68,20 +69,14 @@ public class Database {
     public Object[][] getOrderlines(int OrderID) {
         List<Object[]> rows = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(url, user, password);
-             PreparedStatement pstmt = conn.prepareStatement("SELECT StockItemID, Description, Quantity FROM orderlines WHERE OrderID = ?")) {
+             PreparedStatement pstmt = conn.prepareStatement("SELECT OrderLineID, StockItemID, Description, Quantity FROM orderlines WHERE OrderID = ?")) {
             pstmt.setInt(1, OrderID); // Set the OrderID parameter in the prepared statement
 
             try (ResultSet rs = pstmt.executeQuery()) {
-                int index=1;
                 while (rs.next()) {
-                    Object[] row = new Object[4]; // Number of columns is 3
-                    if(row[0]== null){
-                        row[0]= index;
-                        index++;
-                    }
-
-                    for (int i = 1; i <= 3; i++) {
-                        row[i] = rs.getObject(i);
+                    Object[] row = new Object[4]; // Number of columns is 4
+                    for (int i = 1; i <= 4; i++) {
+                        row[i-1] = rs.getObject(i);
                     }
                     rows.add(row);
                 }
@@ -91,6 +86,7 @@ public class Database {
         }
         return rows.toArray(new Object[0][]);
     }
+
 
     public Object[][] getStockItems() {
         List<Object[]> rows = new ArrayList<>();
@@ -175,5 +171,22 @@ public class Database {
         }
     }
 
+    public static void updateOrderLine(int OrderID, int newQuantity, int OrderLineID) {
+        try (Connection conn = DriverManager.getConnection(url, user, password)) {
+            // Query voor het bijwerken van de 'QuantityOnHand' van een specifiek 'StockItemID'
+            String query = "UPDATE orderlines SET Quantity = ? WHERE OrderID = ? AND OrderLineID = ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                pstmt.setInt(1, newQuantity);
+                pstmt.setInt(2, OrderID);
+                pstmt.setInt(3, OrderLineID);
+                pstmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            System.out.println("Updaten van Orderline is mislukt!");
+        }
+    }
+
 
 }
+
+
