@@ -75,6 +75,14 @@ public class OrderDialog extends JDialog {
         JScrollPane scrollPane = new JScrollPane(tabel);
         add(scrollPane, BorderLayout.CENTER);
 
+        JPanel buttonPanel = new JPanel();
+        JButton saveButton = new JButton("Opslaan");
+        buttonPanel.add(saveButton);
+        JButton cancelButton = new JButton("Annuleren");
+        buttonPanel.add(cancelButton);
+
+        add(buttonPanel, BorderLayout.SOUTH);
+
         setVisible(true);
     }
 }
