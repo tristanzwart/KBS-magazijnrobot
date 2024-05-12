@@ -114,17 +114,15 @@ public class Database {
     public Object[][] getOrders() {
         List<Object[]> rows = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(url, user, password);
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT o.OrderId, o.CustomerID, SUM(l.Quantity) AS TotalQuantity, o.Comments FROM orders o JOIN orderlines l ON o.OrderID = l.OrderID GROUP BY o.OrderId, o.CustomerID, o.Comments LIMIT 300")) {
+             PreparedStatement pstmt = conn.prepareStatement("SELECT o.OrderId, o.CustomerID, SUM(l.Quantity) AS TotalQuantity, o.Comments FROM orders o JOIN orderlines l ON o.OrderID = l.OrderID GROUP BY o.OrderId, o.CustomerID, o.Comments LIMIT 100")) {
 
-
+            ResultSet rs = pstmt.executeQuery();
             ResultSetMetaData rsmd = rs.getMetaData();
-            int columnCount = rsmd.getColumnCount();
 
             while (rs.next()) {
-                Object[] row = new Object[4]; //4 is het aantal kolommen dit staat vast
+                Object[] row = new Object[rsmd.getColumnCount()];
 
-                for (int i = 1; i <= 4; i++) {
+                for (int i = 1; i <= rsmd.getColumnCount(); i++) {
                     row[i - 1] = rs.getObject(i);
                 }
                 rows.add(row);
@@ -134,6 +132,7 @@ public class Database {
         }
         return rows.toArray(new Object[0][]);
     }
+
 
     public void addStockItem(String Productnaam, int QuantityOnHand, String locatie) {
         try (Connection conn = DriverManager.getConnection(url, user, password)) {
