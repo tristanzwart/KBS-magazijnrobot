@@ -1,6 +1,7 @@
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 public class OrderDialog extends JDialog {
@@ -59,8 +60,18 @@ public class OrderDialog extends JDialog {
         Object[][] rec = database.getOrderlines(OrderID);
         String[] header = { "Orderregel" ,"Artikelnummer", "Artikelbeschrijving", "Hoeveelheid" };
 
-        // Create JTable with order lines data
-        tabel = new JTable(rec, header);
+
+        // Custom Tabel maken
+        DefaultTableModel model = new DefaultTableModel(rec, header) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                // Alleen de hoeveelheid kolom mag aangepast worden
+                return column == 3;
+            }
+        };
+
+        // JTable aanmaken met Eigen model hierboven gemaakt
+        tabel = new JTable(model);
         JScrollPane scrollPane = new JScrollPane(tabel);
         add(scrollPane, BorderLayout.CENTER);
 
