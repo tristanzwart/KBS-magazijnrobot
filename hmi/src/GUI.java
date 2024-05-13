@@ -1,6 +1,8 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.TableModel;
@@ -29,6 +31,8 @@ public class GUI extends JFrame{
         String[] columnNames = {};
 
         table = new JTable(new DefaultTableModel(data, columnNames));
+        table.setDefaultEditor(Object.class, null);
+
 
         // Set selection mode
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -60,6 +64,39 @@ public class GUI extends JFrame{
                 }
             }
         });
+        table.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent mouseEvent) {
+                JTable table =(JTable) mouseEvent.getSource();
+                Point point = mouseEvent.getPoint();
+                int row = table.rowAtPoint(point);
+                if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1) {
+                    // Haal de waarden op van de 2de en 3de kolom van de geselecteerde rij
+                    Object valueInSecondColumn = table.getValueAt(row, 1); // Kolommen zijn 0-gebaseerd
+                    Object valueInThirdColumn = table.getValueAt(row, 2); // Kolommen zijn 0-gebaseerd
+                    bottomBar.setHuidigeVoorraad(Integer.parseInt(valueInThirdColumn.toString()));
+                    bottomBar.setHuidigeGeselecteerdeArtikel(Integer.parseInt(valueInSecondColumn.toString()));
+
+                    // Uw code om de dialoog te openen gaat hier
+                    //TODO: Call modal dialoge
+                    artikelDialog.toonDialog("Artikel Aanpassen", String.valueOf(bottomBar.getHuidigeVoorraad()));
+                    //TODO:Get data from dialoge
+                    if (artikelDialog.isOk()) {
+                        if (artikelDialog.getBeginVoorraad() != artikelDialog.getVooraad()) {
+                            if (artikelDialog.getVooraad() == -99999999) {
+                                System.out.println("ongeldige invoer");
+                                giveSideFeedback("Ongeldige invoer!");
+                            } else {
+                                Database.updateStockItem(bottomBar.getHuidigeGeselecteerdeArtikel(), artikelDialog.getVooraad());
+                                System.out.println("Geupdate volgens de volgende parameters: " + bottomBar.getHuidigeGeselecteerdeArtikel() + artikelDialog.getVooraad());
+                                updateVoorraadTableData();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+
 
         // Create scroll pane and add table to it
         scrollPane = new JScrollPane(table);

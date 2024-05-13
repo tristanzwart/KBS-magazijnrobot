@@ -93,6 +93,9 @@ public class ArtikelDialog extends JDialog implements ActionListener{
             this.isOk = true;
 
         }
+        if(e.getSource() == JBcancel){
+            this.isOk = false;
+        }
         setVisible(false);
     }
 

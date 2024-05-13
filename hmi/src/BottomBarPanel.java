@@ -90,7 +90,7 @@ public class BottomBarPanel extends JPanel implements ActionListener {
                         gui.giveSideFeedback("Ongeldige invoer!");
                     } else {
                         Database.updateStockItem(HuidigeGeselecteerdeArtikel, artikelDialog.getVooraad());
-                        System.out.println("updated using following parameters: " + HuidigeGeselecteerdeArtikel + artikelDialog.getVooraad());
+                        System.out.println("Geupdate volgens de volgende parameters: " + HuidigeGeselecteerdeArtikel + artikelDialog.getVooraad());
                         gui.updateVoorraadTableData();
                     }
                 }
@@ -117,5 +117,13 @@ public class BottomBarPanel extends JPanel implements ActionListener {
     public void setHuidigeGeselecteerdeOrder(int getHuidigeGeselecteerdeOrder) {
 
         this.HuidigeGeselecteerdeOrder = getHuidigeGeselecteerdeOrder;
+    }
+
+    public int getHuidigeGeselecteerdeArtikel() {
+        return HuidigeGeselecteerdeArtikel;
+    }
+
+    public int getHuidigeVoorraad() {
+        return HuidigeVoorraad;
     }
 }
