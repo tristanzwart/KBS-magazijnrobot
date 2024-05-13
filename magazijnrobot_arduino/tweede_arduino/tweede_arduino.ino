@@ -1,4 +1,4 @@
-#define swboven 12
+#define swboven 10
 #define swonder 6
 
 #define irsensor A5
@@ -8,6 +8,9 @@ int VRY_PIN = A3;
 
 int pwmPinBovenOnder = 11;
 int directionPinBovenOnder = 13;
+
+int pwmPinVoorAchter = 3;
+int directionPinVoorAchter = 12;
 
 int ENCA = 2;
 int ENCB = 7;
@@ -28,8 +31,8 @@ void setup() {
   pinMode(ENCA,INPUT);
   pinMode(ENCB,INPUT_PULLUP);
 
-  pinMode(3, OUTPUT);
-  pinMode(12, OUTPUT);
+  pinMode(pwmPinVoorAchter, OUTPUT);
+  pinMode(directionPinVoorAchter, OUTPUT);
 
   pinMode(pwmPinBovenOnder, OUTPUT);
   pinMode(directionPinBovenOnder, OUTPUT);
@@ -90,6 +93,16 @@ void naarBoven(int pwm){
 void naarBeneden(int pwm){
   digitalWrite(directionPinBovenOnder, HIGH);
   analogWrite(pwmPinBovenOnder, pwm);
+}
+
+void naarVoren(int pwm){
+  digitalWrite(directionPinVoorAchter, LOW);
+  analogWrite(pwmPinVoorAchter, pwm);
+}
+
+void naarAchteren(int pwm){
+  digitalWrite(directionPinVoorAchter, HIGH);
+  analogWrite(pwmPinVoorAchter, pwm);
 }
 
 void naarbestemming(int target){
