@@ -38,16 +38,23 @@ public class GUI extends JFrame{
             public void valueChanged(ListSelectionEvent e) {
                 if (table.getSelectedRow() != -1) {
                     bottomBar.setArtikelAanpassenStatus(true);
+                    bottomBar.setOrderAanpassenStatus(true);
                 } else {
                     bottomBar.setArtikelAanpassenStatus(false);
+                    bottomBar.setOrderAanpassenStatus(false);
                 }
                 if (!e.getValueIsAdjusting() && table.getSelectedRow() != -1) {
                     int selectedRow = table.getSelectedRow();
                     TableModel model = table.getModel();
 
                     // Haal het artikelnummer op van de geselecteerde rij
-                    bottomBar.setHuidigeGeselecteerdeArtikel(Integer.parseInt(model.getValueAt(selectedRow, 1).toString()));
-                    bottomBar.setHuidigeVoorraad(Integer.parseInt(model.getValueAt(selectedRow, 2).toString()));
+                    if(huidigScherm.equals("voorraad")) {
+                        bottomBar.setHuidigeGeselecteerdeArtikel(Integer.parseInt(model.getValueAt(selectedRow, 1).toString()));
+                        bottomBar.setHuidigeVoorraad(Integer.parseInt(model.getValueAt(selectedRow, 2).toString()));
+                    } else if (huidigScherm.equals("order")) {
+                        bottomBar.setHuidigeGeselecteerdeOrder(Integer.parseInt(model.getValueAt(selectedRow, 0).toString()));
+                    }
+
 
 
                 }
@@ -122,6 +129,7 @@ public class GUI extends JFrame{
 
         } else if (schermNummer == 2) {
             bottomBar.addButton("Verversen");
+            bottomBar.addButton("bekijken");
         }
 
         bottomBar.revalidate();
