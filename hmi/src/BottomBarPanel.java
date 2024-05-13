@@ -32,6 +32,7 @@ public class BottomBarPanel extends JPanel implements ActionListener {
         verversen.addActionListener(this);
         bekijken =new JButton("Bekijken");
         bekijken.addActionListener(this);
+        bekijken.setVisible(false);
 
 
 
