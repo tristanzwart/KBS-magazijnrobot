@@ -3,6 +3,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Objects;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.TableModel;
@@ -69,7 +70,7 @@ public class GUI extends JFrame{
                 JTable table =(JTable) mouseEvent.getSource();
                 Point point = mouseEvent.getPoint();
                 int row = table.rowAtPoint(point);
-                if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1) {
+                if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1 && Objects.equals(huidigScherm, "voorraad")) {
                     // Haal de waarden op van de 2de en 3de kolom van de geselecteerde rij
                     Object valueInSecondColumn = table.getValueAt(row, 1); // Kolommen zijn 0-gebaseerd
                     Object valueInThirdColumn = table.getValueAt(row, 2); // Kolommen zijn 0-gebaseerd
