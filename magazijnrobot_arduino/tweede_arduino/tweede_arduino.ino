@@ -76,16 +76,14 @@ void loop() {
 
   communicatieHMI();
   naarbestemming(bestemming);
-  Serial.println(getVorkAfstand());
 
-  //Vorkafstand 6 mag hij niet verder naar achter.
-  //Vorkafstand 17 mag niet verder naar voren toe.
+
 }
 
 
 void stop(){
   analogWrite(pwmPinBovenOnder, 0);
-  
+  analogWrite(pwmPinVoorAchter, 0);
 }
 
 void naarBoven(int pwm){
@@ -102,6 +100,8 @@ void naarVoren(int pwm){
   if(getVorkAfstand() <= 17){
     digitalWrite(directionPinVoorAchter, LOW);
     analogWrite(pwmPinVoorAchter, pwm);
+  }else{
+    analogWrite(pwmPinVoorAchter, 0);
   }
 }
 
@@ -109,6 +109,8 @@ void naarAchteren(int pwm){
   if(getVorkAfstand() >= 7){
     digitalWrite(directionPinVoorAchter, HIGH);
     analogWrite(pwmPinVoorAchter, pwm);
+  }else{
+    analogWrite(pwmPinVoorAchter, 0);
   }
 }
 
