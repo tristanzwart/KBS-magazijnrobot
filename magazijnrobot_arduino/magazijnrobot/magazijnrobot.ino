@@ -1,5 +1,6 @@
 #define swrechts 12
 #define swlinks 6
+#define noodstop 8
 
 
 int pwmPinLinksRechts = 11;
@@ -18,6 +19,7 @@ int VRX_PIN =  A2; // Arduino pin connected to VRX pin
 
 int knop =4;
 bool laasteknopstatus= false;
+bool laastenoodknopstatus = false;
 int bestemming;
 
 
@@ -44,10 +46,15 @@ void loop() {
   // uitlezenJoystick(); // leest joystick uit en beweeegt hiermee de robot
 
   // eenmaalknopindrukken();
-
-  checkEindebaan();
-  communicatieHMI();
-  naarbestemming(bestemming);
+  if (laastenoodknopstatus == false) {
+    checkEindebaan();
+    communicatieHMI();
+    naarbestemming(bestemming);
+  } else if (laastenoodknopstatus == true) {
+    stop();
+    communicatieHMI();
+  }
+  
   
 
 }
@@ -70,6 +77,23 @@ bool knopuitlezen(){
 void knopingedrukt(){
   Serial.print('g');      //versturen van een signaal
 }
+
+//noodstop :)
+void eenmaalnoodknopindrukken(){
+  bool knop1 = noodknopuitlezen();
+  if(knop1 == HIGH && laastenoodknopstatus == false) {
+    laastenoodknopstatus = true;
+  } else if (knop1 == HIGH && laastenoodknopstatus == true) {
+    laastenoodknopstatus = false;
+  }
+}
+
+bool noodknopuitlezen(){
+  bool knopWaarde = digitalRead(noodstop);
+  delay(50);
+  return knopWaarde;
+}
+//nonoodstop :(
 
 void uitlezenJoystick(){
 
@@ -203,8 +227,16 @@ void checkEindebaan(){
 void communicatieHMI() {
   if (Serial.available() > 0) {
     String data = Serial.readStringUntil('\n'); // Lees de binnenkomende data tot newline
-//     serial.println() //om data terug te sturen naar java.
-    bestemming = data.toInt();
+    if(data == "stop") {
+      if (laastenoodknopstatus == false) {
+        laastenoodknopstatus = true;
+      } else if (laastenoodknopstatus == true) {
+        laastenoodknopstatus = false;
+      }
+    } else {
+      bestemming = data.toInt();
+    }
+    
   }
 }
 

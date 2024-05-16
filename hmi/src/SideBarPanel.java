@@ -65,8 +65,8 @@ public class SideBarPanel extends JPanel implements ActionListener {
             gui.toonScherm("order");
         }else if(e.getSource() == noodstop) {
             if (noodstop.getBackground().equals(Color.red)) {
-                a.verstuurData("stop", "/dev/ttyACM0");
-                b.verstuurData("stop", "/dev/ttyACM1");
+                a.verstuurData("stop", "COM7");
+                b.verstuurData("stop", "COM5");
             }
         }
     }
