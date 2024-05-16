@@ -11,12 +11,16 @@ public class SideBarPanel extends JPanel implements ActionListener {
     private JLabel feedback;
 
     private JButton noodstop;
+    ArduinoCom a = new ArduinoCom();
+    ArduinoCom b = new ArduinoCom();
 
     public SideBarPanel(GUI gui){
         this.gui = gui;
 
         setPreferredSize(new Dimension(120, 1017));
         setLayout(new FlowLayout());
+
+
 
         orders = new JButton("Orders");
         orders.addActionListener(this);
@@ -61,7 +65,8 @@ public class SideBarPanel extends JPanel implements ActionListener {
             gui.toonScherm("order");
         }else if(e.getSource() == noodstop) {
             if (noodstop.getBackground().equals(Color.red)) {
-
+                a.verstuurData("stop", "/dev/ttyACM0");
+                b.verstuurData("stop", "/dev/ttyACM1");
             }
         }
     }

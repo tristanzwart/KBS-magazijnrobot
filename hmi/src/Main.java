@@ -9,8 +9,6 @@ public class Main {
         ArduinoCom b = new ArduinoCom();
         b.verstuurData("-1800", "/dev/ttyACM1");
 
-        a.verstuurData("1000", "/dev/ttyACM0");
-
     }
 
 }
