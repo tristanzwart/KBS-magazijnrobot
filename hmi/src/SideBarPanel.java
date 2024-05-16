@@ -54,12 +54,8 @@ public class SideBarPanel extends JPanel implements ActionListener {
             //Toon het voorraadscherm
             gui.toonScherm("order");
         }else if(e.getSource() == noodstop) {
-            if (noodstop.getBackground().equals(Color.GREEN)) {
-                // code voor het stoppen van de noodstop
-                noodstop.setBackground(Color.red);
-            } else {
-                // code voor het starten van de noodstop
-                noodstop.setBackground(Color.GREEN);
+            if (noodstop.getBackground().equals(Color.red)) {
+
             }
         }
     }
