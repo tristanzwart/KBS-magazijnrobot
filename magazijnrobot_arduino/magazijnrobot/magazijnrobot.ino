@@ -1,6 +1,7 @@
 #define swrechts 12
 #define swlinks 6
 #define noodstop 8
+#define noodstopsignaal 10
 
 
 int pwmPinLinksRechts = 11;
@@ -8,6 +9,7 @@ int directionPinLinksRechts = 13;
 
 int ENCA = 2;
 int ENCB =7;
+
 
 int pos = 0;
 long prevT= 0;
@@ -36,7 +38,9 @@ void setup() {
   pinMode(directionPinLinksRechts, OUTPUT);
   Serial.begin(9600);
   pinMode(2, INPUT);
+  pinMode(noodstop, INPUT);
   pinMode(knop, INPUT_PULLUP);
+  pinMode(noodstopsignaal, OUTPUT);
 
   calibratie();
 
@@ -47,10 +51,12 @@ void loop() {
 
   // eenmaalknopindrukken();
   if (laastenoodknopstatus == false) {
+    digitalWrite(noodstopsignaal, HIGH);
     checkEindebaan();
     communicatieHMI();
     naarbestemming(bestemming);
   } else if (laastenoodknopstatus == true) {
+    digitalWrite(noodstopsignaal, LOW);
     stop();
     communicatieHMI();
   }
