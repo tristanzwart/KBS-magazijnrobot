@@ -10,7 +10,6 @@ int directionPinLinksRechts = 13;
 int ENCA = 2;
 int ENCB =7;
 
-
 int pos = 0;
 long prevT= 0;
 float eprev = 0;
@@ -24,6 +23,9 @@ bool laasteknopstatus= false;
 bool laastenoodknopstatus = false;
 int bestemming;
 
+bool handmatigeBesturing = false;
+bool blockBesturingLinks = false;
+bool blockBesturingRechts = false;
 
 void setup() {
   pinMode(swrechts, INPUT_PULLUP);
@@ -47,12 +49,17 @@ void setup() {
 }
 
 void loop() {
-  // uitlezenJoystick(); // leest joystick uit en beweeegt hiermee de robot
 
-  // eenmaalknopindrukken();
+
+
   if (laastenoodknopstatus == false) {
-    digitalWrite(noodstopsignaal, HIGH);
-    checkEindebaan();
+  digitalWrite(noodstopsignaal, HIGH);
+  checkEindebaan();
+  if(handmatigeBesturing){
+    uitlezenJoystick();
+    // eenmaalknopindrukken();
+    }
+  else{
     communicatieHMI();
     naarbestemming(bestemming);
   } else if (laastenoodknopstatus == true) {
@@ -60,7 +67,6 @@ void loop() {
     stop();
     communicatieHMI();
   }
-  
   
 
 }
@@ -127,13 +133,21 @@ void stop(){
 }
 
 void naarLinks(int pwm){
-  digitalWrite(directionPinLinksRechts, LOW);
-  analogWrite(pwmPinLinksRechts, pwm);
+  if(!blockBesturingLinks || !handmatigeBesturing){
+    digitalWrite(directionPinLinksRechts, LOW);
+    analogWrite(pwmPinLinksRechts, pwm);
+  }else{
+    stop();
+  }
 }
 
 void naarRechts(int pwm){
-  digitalWrite(directionPinLinksRechts, HIGH);
-  analogWrite(pwmPinLinksRechts, pwm);
+  if(!blockBesturingRechts || !handmatigeBesturing){
+    digitalWrite(directionPinLinksRechts, HIGH);
+    analogWrite(pwmPinLinksRechts, pwm);
+  }else{
+    stop();
+  }
 }
 
 void naarbestemming(int target){
@@ -217,16 +231,26 @@ void calibratie(){
 
 void checkEindebaan(){
   if(digitalRead(swrechts)){
-    calibratie();
+    if(!handmatigeBesturing){
+      calibratie();
+    }else{
+      blockBesturingLinks = true;
+    }
+
     //Terug naar recths totdat de switch weer uit is.
-
-
-
+  }else{
+    blockBesturingLinks = false;
   }
 
   if(digitalRead(swlinks)){
     //Als deze switch wordt aangeraakt dan is er iets fout gegaan en moet er worden ge her calibreerd
-    calibratie();
+    if(!handmatigeBesturing){
+      calibratie();
+    }else{
+      blockBesturingRechts = true;
+    }
+  }else{
+    blockBesturingRechts = false;
   }
 }
 
@@ -242,7 +266,7 @@ void communicatieHMI() {
     } else {
       bestemming = data.toInt();
     }
-    
+
   }
 }
 
