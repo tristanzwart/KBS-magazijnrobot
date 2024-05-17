@@ -20,7 +20,7 @@ long prevT= 0;
 float eprev = 0;
 float  eintergral = 0;
 
-int bestemming;
+int bestemming=80;
 
 bool handmatigeBesturing = false;
 
@@ -161,7 +161,7 @@ void naarAchteren(int pwm){
 
 void naarbestemming(int target){
  float kp = 1; //PID algoritme variabelen
- float kd= 0.025;
+ float kd= 0.005;
  float ki= 0;
 
  long currentTime = micros();
@@ -171,6 +171,12 @@ void naarbestemming(int target){
 
  int e = pos- target;
 
+ if (abs(e) <= 10) {
+        // If within margin, stop the motor
+        setMotor(0, 0, pwmPinBovenOnder, directionPinBovenOnder);
+        return;
+  }
+
  float dedt = (e-eprev)/ (deltaT);
  
  eintergral = eintergral = e*deltaT;
@@ -178,18 +184,23 @@ void naarbestemming(int target){
  float u = kp*e + kd*dedt + ki*eintergral;
 
  float pwr = fabs(u);
-  if( pwr > 255 ){
-    pwr = 255;
-  }
-  if(pwr < 255 && pwr >0){
-    pwr= 255;
-  }
+  
 
   // motor direction
   int dir = 1;
   if(u<0){
     dir = 0;
   }
+ 
+  if( pwr > 255 ){
+     pwr = 255;
+  }
+  if(pwr < 200 && pwr >0){
+    pwr= 200;
+  }
+ 
+
+    
 
   // signal the motor
   setMotor(dir,pwr,pwmPinBovenOnder,directionPinBovenOnder);
@@ -231,7 +242,7 @@ void calibratie(){
   }
   stop();
   delay(1000);
-  pos= -80;
+  pos= 0;
 
   while(digitalRead(swonder)){
     naarBoven(255);
