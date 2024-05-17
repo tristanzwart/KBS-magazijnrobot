@@ -3,7 +3,6 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Objects;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.TableModel;
@@ -23,7 +22,12 @@ public class GUI extends JFrame{
     private JTable table;
     private JScrollPane scrollPane;
 
+    private ArduinoCom arduino1;
+    private ArduinoCom arduino2;
+
     public GUI() {
+        arduino1 = new ArduinoCom("COM4");
+        arduino2 = new ArduinoCom("COM3");
         artikelDialog = new ArtikelDialog(this, true);
         db = new Database();
 
@@ -70,7 +74,7 @@ public class GUI extends JFrame{
                 JTable table =(JTable) mouseEvent.getSource();
                 Point point = mouseEvent.getPoint();
                 int row = table.rowAtPoint(point);
-                if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1 && Objects.equals(huidigScherm, "voorraad")) {
+                if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1) {
                     // Haal de waarden op van de 2de en 3de kolom van de geselecteerde rij
                     Object valueInSecondColumn = table.getValueAt(row, 1); // Kolommen zijn 0-gebaseerd
                     Object valueInThirdColumn = table.getValueAt(row, 2); // Kolommen zijn 0-gebaseerd
@@ -121,8 +125,11 @@ public class GUI extends JFrame{
         add(sideBar, BorderLayout.EAST);
         bottomBar = new BottomBarPanel(this, artikelDialog);
         add(bottomBar, BorderLayout.SOUTH);
+        toonScherm("robot");
 
         setVisible(true);
+
+
     }
 
     public void toonScherm(String schermNaam){
@@ -133,7 +140,10 @@ public class GUI extends JFrame{
         } else if (schermNaam.equals("order")) {
             huidigScherm = "order";
             schermNummer = 2;
-        }else{
+        }else if(schermNaam.equals("robot")) {
+            huidigScherm = "robot";
+            schermNummer = 3;
+        }else {
             System.out.println("Dit scherm bestaat niet: " + schermNaam);
             return;
         }
@@ -152,12 +162,29 @@ public class GUI extends JFrame{
             updateOrderTabelData();
         }
 
+
+
         // Add scroll pane to main panel
-        mainPanel.add(scrollPane);
+        if (schermNummer == 1 || schermNummer == 2) {
+            // Update table data for "voorraad" or "order" screens
+            if (schermNummer == 1) {
+                updateVoorraadTableData();
+            } else if (schermNummer == 2) {
+                updateOrderTabelData();
+            }
+            // Add scroll pane with table to main panel
+            mainPanel.add(scrollPane);
+        } else if (schermNummer == 3) {
+
+            // Add content for "robot" screen
+            RobotPanel robotPanel = new RobotPanel(this);
+            mainPanel.setBorder(BorderFactory.createEmptyBorder(210, 250, 0 ,0));
+            mainPanel.add(robotPanel);
+        }
 
         //Revalidate en repaint
         mainPanel.revalidate();
-        //mainPanel.repaint();
+        mainPanel.repaint();
 
         bottomBar.removeAll();
         if(schermNummer == 1) {
@@ -200,6 +227,14 @@ public void updateOrderTabelData() {
 
     public String getHuidigScherm(){
         return huidigScherm;
+    }
+
+    public ArduinoCom getArduino1() {
+        return arduino1;
+    }
+
+    public ArduinoCom getArduino2() {
+        return arduino2;
     }
 
 

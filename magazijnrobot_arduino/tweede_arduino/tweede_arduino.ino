@@ -4,7 +4,7 @@
 #define irsensor A5
 
 bool voor = false;
-int VRY_PIN = A3;
+int VRY_PIN = A2;
 
 int pwmPinBovenOnder = 11;
 int directionPinBovenOnder = 13;
@@ -21,6 +21,14 @@ float eprev = 0;
 float  eintergral = 0;
 
 int bestemming;
+
+bool handmatigeBesturing = false;
+
+
+bool handmatigelaasteknopstatus= false;
+bool blockBesturingBoven = false;
+bool blockBesturingBeneden = false;
+int handKnop = 5;
 
 void setup() {
   Serial.begin(9600); // Start de seriële communicatie op 9600 baud
@@ -46,16 +54,16 @@ void setup() {
 void uitlezenJoystick(){
   
   int yValue = analogRead(VRY_PIN);
-  Serial.print("y= ");
-  Serial.println(yValue);
+  // Serial.print("y= ");
+  // Serial.println(yValue);
 
   
-  if (yValue < 490){
+  if (yValue < 410){
     stop();
     naarBoven(255);         // het naar boven bewegen van joystick
 
   }
-  else if(yValue >520){
+  else if(yValue >440){
     stop();
     naarBeneden(110);       //het naar beneden bewegen van de joystick
 
@@ -71,29 +79,66 @@ void uitlezenJoystick(){
 
 void loop() {
   //naarbestemming(1500);
+  handmatigeenmaalknopindrukken();
   checkEindebaan();
-  // Serial.println(pos);
-
-  communicatieHMI();
+  if(handmatigeBesturing){
+    uitlezenJoystick();
+  }
+  else{
+    communicatieHMI();
   naarbestemming(bestemming);
+  }
 
 
 }
+void handmatigeenmaalknopindrukken(){
+  bool knop1 = knopuitlezen(handKnop);
+  if(knop1 != handmatigelaasteknopstatus && knop1 == HIGH ){    // zorgt ervoor dat de knop inet herhaalt (een signaal)
+    handmatigknopingedruk();
+  }
+  handmatigelaasteknopstatus = knop1;
+}
 
+bool knopuitlezen(int knoppin){
+  bool knopWaarde = digitalRead(knoppin);
+  delay(50);
+
+  return knopWaarde;
+}
+void handmatigknopingedruk(){
+  if(handmatigeBesturing){
+    handmatigeBesturing= false;
+  }
+  else{
+    handmatigeBesturing= true;
+  }
+  
+  
+
+}
 
 void stop(){
   analogWrite(pwmPinBovenOnder, 0);
   analogWrite(pwmPinVoorAchter, 0);
 }
 
+
 void naarBoven(int pwm){
-  digitalWrite(directionPinBovenOnder, LOW);
-  analogWrite(pwmPinBovenOnder, pwm);
+  if(!blockBesturingBoven || !handmatigeBesturing){
+    digitalWrite(directionPinBovenOnder, LOW);
+    analogWrite(pwmPinBovenOnder, pwm);
+  }else{
+    stop();
+  }
 }
 
 void naarBeneden(int pwm){
-  digitalWrite(directionPinBovenOnder, HIGH);
-  analogWrite(pwmPinBovenOnder, pwm);
+  if(!blockBesturingBeneden || !handmatigeBesturing){
+    digitalWrite(directionPinBovenOnder, HIGH);
+    analogWrite(pwmPinBovenOnder, pwm);
+  }else{
+    stop();
+  }
 }
 
 void naarVoren(int pwm){
@@ -186,7 +231,7 @@ void calibratie(){
   }
   stop();
   delay(1000);
-  pos= 0;
+  pos= -80;
 
   while(digitalRead(swonder)){
     naarBoven(255);
@@ -197,13 +242,24 @@ void calibratie(){
 
 void checkEindebaan(){
   if(digitalRead(swonder)){
-    calibratie();
+    if(!handmatigeBesturing){
+      calibratie();
+    }else{
+      blockBesturingBeneden = true;
+    }
 
-
+  }else{
+    blockBesturingBeneden = false;
   }
 
   if(digitalRead(swboven)){
-    calibratie();
+     if(!handmatigeBesturing){
+        calibratie();
+     }else{
+        blockBesturingBoven = true;
+     }
+  }else{
+    blockBesturingBoven = false;
   }
 }
 

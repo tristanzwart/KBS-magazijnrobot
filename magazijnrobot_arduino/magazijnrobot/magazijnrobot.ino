@@ -20,6 +20,9 @@ int knop =4;
 bool laasteknopstatus= false;
 int bestemming;
 
+bool handmatigeBesturing = false;
+bool blockBesturingLinks = false;
+bool blockBesturingRechts = false;
 
 void setup() {
   pinMode(swrechts, INPUT_PULLUP);
@@ -41,13 +44,19 @@ void setup() {
 }
 
 void loop() {
-  // uitlezenJoystick(); // leest joystick uit en beweeegt hiermee de robot
+  
 
-  // eenmaalknopindrukken();
+  
 
   checkEindebaan();
-  communicatieHMI();
+  if(handmatigeBesturing){
+    uitlezenJoystick();
+    // eenmaalknopindrukken();
+    }
+  else{
+    communicatieHMI();
   naarbestemming(bestemming);
+  }
   
 
 }
@@ -97,13 +106,21 @@ void stop(){
 }
 
 void naarLinks(int pwm){
-  digitalWrite(directionPinLinksRechts, LOW);
-  analogWrite(pwmPinLinksRechts, pwm);
+  if(!blockBesturingLinks || !handmatigeBesturing){
+    digitalWrite(directionPinLinksRechts, LOW);
+    analogWrite(pwmPinLinksRechts, pwm);
+  }else{
+    stop();
+  }
 }
 
 void naarRechts(int pwm){
-  digitalWrite(directionPinLinksRechts, HIGH);
-  analogWrite(pwmPinLinksRechts, pwm);
+  if(!blockBesturingRechts || !handmatigeBesturing){
+    digitalWrite(directionPinLinksRechts, HIGH);
+    analogWrite(pwmPinLinksRechts, pwm);
+  }else{
+    stop();
+  }
 }
 
 void naarbestemming(int target){
@@ -187,16 +204,26 @@ void calibratie(){
 
 void checkEindebaan(){
   if(digitalRead(swrechts)){
-    calibratie();
+    if(!handmatigeBesturing){
+      calibratie();
+    }else{
+      blockBesturingLinks = true;
+    }
+  
     //Terug naar recths totdat de switch weer uit is.
-
-
-
+  }else{
+    blockBesturingLinks = false;
   }
 
   if(digitalRead(swlinks)){
     //Als deze switch wordt aangeraakt dan is er iets fout gegaan en moet er worden ge her calibreerd
-    calibratie();
+    if(!handmatigeBesturing){
+      calibratie();
+    }else{
+      blockBesturingRechts = true;
+    }
+  }else{
+    blockBesturingRechts = false;
   }
 }
 
