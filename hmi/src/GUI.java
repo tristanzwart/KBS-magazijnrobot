@@ -166,6 +166,7 @@ public class GUI extends JFrame{
 
         // Add scroll pane to main panel
         if (schermNummer == 1 || schermNummer == 2) {
+            mainPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0 ,0));
             // Update table data for "voorraad" or "order" screens
             if (schermNummer == 1) {
                 updateVoorraadTableData();
