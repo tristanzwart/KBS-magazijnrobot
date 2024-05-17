@@ -112,8 +112,8 @@ void handmatigknopingedruk(){
   else{
     handmatigeBesturing= true;
   }
-  
-  
+
+
 
 }
 
