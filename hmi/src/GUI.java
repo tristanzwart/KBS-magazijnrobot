@@ -3,6 +3,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.TableModel;
@@ -98,6 +100,20 @@ public class GUI extends JFrame{
                         }
                     }
                 }
+            }
+        });
+
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                super.windowClosing(e);
+                if (arduino1 != null) {
+                    arduino1.closePort();
+                }
+                if (arduino2 != null) {
+                    arduino2.closePort();
+                }
+                System.out.println("Comm poorten gesloten!");
             }
         });
 
