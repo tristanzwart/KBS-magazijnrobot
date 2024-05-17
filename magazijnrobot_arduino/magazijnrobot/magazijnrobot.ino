@@ -134,6 +134,11 @@ void naarbestemming(int target){
  prevT = currentTime;
 
  int e = pos- target;
+ if (abs(e) <= 10) {
+        // If within margin, stop the motor
+        setMotor(0,0,pwmPinLinksRechts,directionPinLinksRechts);
+        return;
+}
 
  float dedt = (e-eprev)/ (deltaT);
 
@@ -145,8 +150,8 @@ void naarbestemming(int target){
   if( pwr > 255 ){
     pwr = 255;
   }
-  if(pwr < 90 && pwr >0){
-    pwr= 90;
+  if(pwr < 120 && pwr >0){
+    pwr= 120;
   }
 
   // motor direction

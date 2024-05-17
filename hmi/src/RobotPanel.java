@@ -16,7 +16,7 @@ public class RobotPanel extends JPanel implements ActionListener {
 
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
-                buttons[i][j] = new JButton("" + (char)('A' + j) + (i + 1));
+                buttons[i][j] = new JButton("" + (char)('E' - j) + (5 - i));
                 buttons[i][j].addActionListener(this);
                 add(buttons[i][j]);
             }

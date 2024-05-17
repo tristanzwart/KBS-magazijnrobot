@@ -63,7 +63,7 @@ public class ArduinoCom {
             case '2':
                 return String.valueOf(700);
             case '3':
-                return String.valueOf(1124);
+                return String.valueOf(1200);
             case '4':
                 return String.valueOf(1653);
             case '5':
