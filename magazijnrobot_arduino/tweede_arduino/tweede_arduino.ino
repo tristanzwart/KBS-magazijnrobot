@@ -2,6 +2,7 @@
 #define swonder 6
 
 #define irsensor A5
+#define noodstopinput 8
 
 bool voor = false;
 int VRY_PIN = A2;
@@ -41,6 +42,7 @@ void setup() {
 
   pinMode(pwmPinVoorAchter, OUTPUT);
   pinMode(directionPinVoorAchter, OUTPUT);
+  pinMode(noodstopinput, INPUT);
 
   pinMode(pwmPinBovenOnder, OUTPUT);
   pinMode(directionPinBovenOnder, OUTPUT);
@@ -78,15 +80,19 @@ void uitlezenJoystick(){
 } 
 
 void loop() {
-  //naarbestemming(1500);
-  handmatigeenmaalknopindrukken();
-  checkEindebaan();
-  if(handmatigeBesturing){
-    uitlezenJoystick();
-  }
-  else{
-    communicatieHMI();
-  naarbestemming(bestemming);
+  if(digitalRead(noodstopinput) == HIGH) {
+      //naarbestemming(1500);
+      handmatigeenmaalknopindrukken();
+      checkEindebaan();
+      if(handmatigeBesturing){
+        uitlezenJoystick();
+      }
+      else{
+        communicatieHMI();
+      naarbestemming(bestemming);
+      }
+  }else if (digitalRead(noodstopinput) == LOW) {
+       stop();
   }
 
 

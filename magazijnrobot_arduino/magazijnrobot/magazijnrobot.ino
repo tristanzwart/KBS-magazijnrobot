@@ -1,5 +1,7 @@
 #define swrechts 12
 #define swlinks 6
+#define noodstop 8
+#define noodstopsignaal 10
 
 
 int pwmPinLinksRechts = 11;
@@ -18,6 +20,7 @@ int VRX_PIN =  A2; // Arduino pin connected to VRX pin
 
 int knop =4;
 bool laasteknopstatus= false;
+bool laastenoodknopstatus = false;
 int bestemming;
 
 bool handmatigeBesturing = false;
@@ -37,17 +40,20 @@ void setup() {
   pinMode(directionPinLinksRechts, OUTPUT);
   Serial.begin(9600);
   pinMode(2, INPUT);
+  pinMode(noodstop, INPUT);
   pinMode(knop, INPUT_PULLUP);
+  pinMode(noodstopsignaal, OUTPUT);
 
   calibratie();
 
 }
 
 void loop() {
-  
 
-  
 
+
+  if (laastenoodknopstatus == false) {
+  digitalWrite(noodstopsignaal, HIGH);
   checkEindebaan();
   if(handmatigeBesturing){
     uitlezenJoystick();
@@ -55,7 +61,11 @@ void loop() {
     }
   else{
     communicatieHMI();
-  naarbestemming(bestemming);
+    naarbestemming(bestemming);
+  } else if (laastenoodknopstatus == true) {
+    digitalWrite(noodstopsignaal, LOW);
+    stop();
+    communicatieHMI();
   }
   
 
@@ -79,6 +89,23 @@ bool knopuitlezen(){
 void knopingedrukt(){
   Serial.print('g');      //versturen van een signaal
 }
+
+//noodstop :)
+void eenmaalnoodknopindrukken(){
+  bool knop1 = noodknopuitlezen();
+  if(knop1 == HIGH && laastenoodknopstatus == false) {
+    laastenoodknopstatus = true;
+  } else if (knop1 == HIGH && laastenoodknopstatus == true) {
+    laastenoodknopstatus = false;
+  }
+}
+
+bool noodknopuitlezen(){
+  bool knopWaarde = digitalRead(noodstop);
+  delay(50);
+  return knopWaarde;
+}
+//nonoodstop :(
 
 void uitlezenJoystick(){
 
@@ -214,7 +241,7 @@ void checkEindebaan(){
     }else{
       blockBesturingLinks = true;
     }
-  
+
     //Terug naar recths totdat de switch weer uit is.
   }else{
     blockBesturingLinks = false;
@@ -235,8 +262,16 @@ void checkEindebaan(){
 void communicatieHMI() {
   if (Serial.available() > 0) {
     String data = Serial.readStringUntil('\n'); // Lees de binnenkomende data tot newline
-//     serial.println() //om data terug te sturen naar java.
-    bestemming = data.toInt();
+    if(data == "stop") {
+      if (laastenoodknopstatus == false) {
+        laastenoodknopstatus = true;
+      } else if (laastenoodknopstatus == true) {
+        laastenoodknopstatus = false;
+      }
+    } else {
+      bestemming = data.toInt();
+    }
+
   }
 }
 
