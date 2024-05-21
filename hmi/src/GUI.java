@@ -76,7 +76,7 @@ public class GUI extends JFrame{
                 JTable table =(JTable) mouseEvent.getSource();
                 Point point = mouseEvent.getPoint();
                 int row = table.rowAtPoint(point);
-                if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1) {
+                if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1 && huidigScherm.equals("voorraad")) {
                     // Haal de waarden op van de 2de en 3de kolom van de geselecteerde rij
                     Object valueInSecondColumn = table.getValueAt(row, 1); // Kolommen zijn 0-gebaseerd
                     Object valueInThirdColumn = table.getValueAt(row, 2); // Kolommen zijn 0-gebaseerd
