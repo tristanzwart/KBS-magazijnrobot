@@ -3,6 +3,12 @@
 
 #define irsensor A5
 
+#define joysw A5
+#define comnood 4
+
+#define handmatigecom 9
+int aantal= 0;
+
 bool voor = false;
 int VRY_PIN = A2;
 
@@ -30,6 +36,7 @@ bool blockBesturingBoven = false;
 bool blockBesturingBeneden = false;
 int handKnop = 5;
 
+
 void setup() {
   Serial.begin(9600); // Start de seriële communicatie op 9600 baud
 
@@ -44,13 +51,23 @@ void setup() {
 
   pinMode(pwmPinBovenOnder, OUTPUT);
   pinMode(directionPinBovenOnder, OUTPUT);
+  pinMode(comnood,OUTPUT);
+  pinMode(joysw, INPUT_PULLUP);
+
+  pinMode(handmatigecom, OUTPUT);
+
 
   attachInterrupt(digitalPinToInterrupt(ENCA),leesEncoder,RISING);
+  digitalWrite(handmatigecom, HIGH);
 
   calibratie();
 
+
+
   
-}
+} 
+
+
 void uitlezenJoystick(){
   
   int yValue = analogRead(VRY_PIN);
@@ -58,12 +75,12 @@ void uitlezenJoystick(){
   // Serial.println(yValue);
 
   
-  if (yValue < 410){
+  if (yValue < 480){
     stop();
     naarBoven(255);         // het naar boven bewegen van joystick
 
   }
-  else if(yValue >440){
+  else if(yValue >530){
     stop();
     naarBeneden(110);       //het naar beneden bewegen van de joystick
 
@@ -71,25 +88,34 @@ void uitlezenJoystick(){
   else{
     stop();
   }
-
-
-  
-  
 } 
 
 void loop() {
+  linksrechtsstop();
+
   //naarbestemming(1500);
   handmatigeenmaalknopindrukken();
   checkEindebaan();
   if(handmatigeBesturing){
+    
     uitlezenJoystick();
+    joyeenmaalknopindrukken();
   }
   else{
-    communicatieHMI();
-  naarbestemming(bestemming);
+    
+    //communicatieHMI();
+    naarbestemming(bestemming);
   }
 
+Serial.println(digitalRead(joysw));
 
+}
+void joyeenmaalknopindrukken(){
+  bool knop1 = knopuitlezen(joysw);
+  if(knop1 == LOW ){    // zorgt ervoor dat de knop inet herhaalt (een signaal)
+    productoppakken();
+  }
+  
 }
 void handmatigeenmaalknopindrukken(){
   bool knop1 = knopuitlezen(handKnop);
@@ -108,9 +134,12 @@ bool knopuitlezen(int knoppin){
 void handmatigknopingedruk(){
   if(handmatigeBesturing){
     handmatigeBesturing= false;
+    digitalWrite(handmatigecom, HIGH);
+
   }
   else{
     handmatigeBesturing= true;
+    digitalWrite(handmatigecom, LOW);
   }
 
 
@@ -287,9 +316,23 @@ int getVorkAfstand(){
   // 5v
   float volts = analogRead(irsensor)*0.0048828125;  // value from sensor * (5/1024)
   int distance = 13*pow(volts, -1); // worked out from datasheet graph
-  delay(1000); // slow down serial port
-
+   
 
   return(distance);   // return de afstand in cm
+
+}
+
+void linksrechtsstop(){
+  if(getVorkAfstand()> 7){
+    digitalWrite(comnood, LOW);
+    
+  }
+  else{
+    digitalWrite(comnood, HIGH);
+  }
+}
+void productoppakken(){
+ 
+
 
 }

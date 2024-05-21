@@ -1,6 +1,7 @@
 #define swrechts 12
 #define swlinks 6
 
+int handmatigecom  = 5;
 
 int pwmPinLinksRechts = 11;
 int directionPinLinksRechts = 13;
@@ -14,9 +15,9 @@ float eprev = 0;
 float  eintergral = 0;
 
 int VRX_PIN =  A2; // Arduino pin connected to VRX pin
-// Arduino pin connected to VRY pin
 
-int knop =4;
+
+int comnoodstop =4;
 bool laasteknopstatus= false;
 int bestemming;
 
@@ -25,6 +26,7 @@ bool blockBesturingLinks = false;
 bool blockBesturingRechts = false;
 
 void setup() {
+  pinMode(handmatigecom, INPUT);
   pinMode(swrechts, INPUT_PULLUP);
   pinMode(swlinks, INPUT_PULLUP);
 
@@ -37,48 +39,51 @@ void setup() {
   pinMode(directionPinLinksRechts, OUTPUT);
   Serial.begin(9600);
   pinMode(2, INPUT);
-  pinMode(knop, INPUT_PULLUP);
+  pinMode(comnoodstop, INPUT);
 
   calibratie();
 
 }
 
 void loop() {
-  
-
-  
-
+  if(!digitalRead(comnoodstop)){
+  stoplinksrechts();
+  }
+  else{
   checkEindebaan();
-  if(handmatigeBesturing){
+  if(!digitalRead(handmatigecom)){
+    handmatigeBesturing= true;
     uitlezenJoystick();
     // eenmaalknopindrukken();
     }
   else{
-    communicatieHMI();
+    handmatigeBesturing= false;
+    //communicatieHMI();
   naarbestemming(bestemming);
+  }
   }
   
 
 }
 
-void eenmaalknopindrukken(){
-  bool knop1 = knopuitlezen();
-  if(knop1 != laasteknopstatus && knop1 == HIGH ){    // zorgt ervoor dat de knop inet herhaalt (een signaal)
-    knopingedrukt();
-  }
-  laasteknopstatus = knop1;
-}
 
-bool knopuitlezen(){
-  bool knopWaarde = digitalRead(knop);
-  delay(50);
-  return knopWaarde;
 
-}
+// void eenmaalknopindrukken(){
+//   bool knop1 = knopuitlezen();
+//   if(knop1 != laasteknopstatus && knop1 == HIGH ){    // zorgt ervoor dat de knop inet herhaalt (een signaal)
+    
+//   }
+//   laasteknopstatus = knop1;
+// }
 
-void knopingedrukt(){
-  Serial.print('g');      //versturen van een signaal
-}
+// bool knopuitlezen(int knop){
+//   bool knopWaarde = digitalRead(knop);
+//   delay(50);
+//   return knopWaarde;
+
+// }
+
+
 
 void uitlezenJoystick(){
 
@@ -239,5 +244,10 @@ void communicatieHMI() {
     bestemming = data.toInt();
   }
 }
+void stoplinksrechts(){
+  if(!digitalRead(comnoodstop)){
+    stop();
 
+  }
+}
 
