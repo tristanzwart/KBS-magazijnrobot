@@ -10,6 +10,13 @@ public class ArduinoCom {
             System.out.println("Kan poort niet openen!");
             return;
         }
+
+        try{
+            // Wacht 2 seconden voor het versturen van commando's om verbinding te stabiliseren
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            System.out.println("Een fout opgetreden tijdens het wachten: " + e.getMessage());
+        }
     }
 
 
@@ -17,9 +24,6 @@ public class ArduinoCom {
 
 
         try {
-            // Wacht 2 seconden voor het versturen van commando's om verbinding te stabiliseren
-            Thread.sleep(2000);
-
             // Verzend een commando naar de Arduino
             String command = data + "\n"; // Vraag de temperatuur op
             comPort.getOutputStream().write(command.getBytes());
@@ -33,8 +37,7 @@ public class ArduinoCom {
 //            int numRead = comPort.readBytes(readBuffer, readBuffer.length);
 //            System.out.println("Ontvangen van Arduino: " + new String(readBuffer, 0, numRead));
 
-        } catch (InterruptedException e) {
-            System.out.println("Een fout opgetreden tijdens het wachten: " + e.getMessage());
+
         } catch (Exception e) {
             e.printStackTrace();
         }
