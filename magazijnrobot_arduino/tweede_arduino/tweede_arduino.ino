@@ -41,6 +41,10 @@ int handKnop = 5;
 bool noodstopstatus = false;
 int noodlaasteknopstatus;
 
+bool oppakken = false;
+int bestemmingoppakken;
+bool joylaasteknopstatus = true;
+
 
 void setup() {
   Serial.begin(9600); // Start de seriële communicatie op 9600 baud
@@ -97,11 +101,9 @@ void uitlezenJoystick(){
 
 void loop() {
   NOODSTOP();
-  communicatieHMI();
-  if(noodstopstatus == true) {
-   
-    
-  } else if (noodstopstatus == false) {
+  Serial.print(pos);
+  //communicatieHMI();
+  if (noodstopstatus == false) {
     digitalWrite(comnood, LOW);
     linksrechtsstop();
 
@@ -114,11 +116,11 @@ void loop() {
       joyeenmaalknopindrukken();
     }
     else{
-      
-      
       naarbestemming(bestemming);
     }
   }
+
+  
   
   
 
@@ -127,10 +129,11 @@ void loop() {
 }
 void joyeenmaalknopindrukken(){
   bool knop1 = knopuitlezen(joysw);
-  if(knop1 == LOW ){    // zorgt ervoor dat de knop inet herhaalt (een signaal)
-    productoppakken();
+  if(knop1 != joylaasteknopstatus && knop1 == HIGH ){    // zorgt ervoor dat de knop inet herhaalt (een signaal)
+   productoppakken();
   }
-  
+  joylaasteknopstatus = knop1;
+ 
 }
 void handmatigeenmaalknopindrukken(){
   bool knop1 = knopuitlezen(handKnop);
@@ -261,10 +264,10 @@ void leesEncoder(){
   int b = digitalRead(ENCB);
   //Serial.println(b);
   if(b>0){
-    pos--;
+    pos++;
   }
   else{
-    pos++;
+    pos--;
 
   }
 }
@@ -347,11 +350,7 @@ void linksrechtsstop(){
     digitalWrite(comnood, HIGH);
   }
 }
-void productoppakken(){
- 
 
-
-}
 
 
 void NOODSTOP(){
@@ -374,6 +373,21 @@ void noodknopingedruk(){
     digitalWrite(comnood, LOW);
     stop();
     naarVoren(0);
-    Serial.print("Stop");
+    
   }
+}
+
+void productoppakken(){
+  digitalWrite(comnood, LOW);
+  naarVoren(150);
+  delay(1200);
+  naarVoren(0);
+  naarBoven(255);
+  delay(200);
+  naarBoven(0);
+  naarAchteren(150);
+  delay(1200);
+  naarAchteren(0);
+  digitalWrite(comnood, HIGH);
+
 }
