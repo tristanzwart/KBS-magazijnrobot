@@ -4,10 +4,12 @@
 #define irsensor A5
 
 #define joysw A4
-#define comnood 4
+#define comnood 8
 #define noodknop A3
 
 #define handmatigecom 9
+
+#define tiltsensor 4
 int aantal= 0;
 
 bool voor = false;
@@ -65,14 +67,12 @@ void setup() {
 
   pinMode(handmatigecom, OUTPUT);
 
+  pinMode(tiltsensor, INPUT_PULLUP);
 
   attachInterrupt(digitalPinToInterrupt(ENCA),leesEncoder,RISING);
   digitalWrite(handmatigecom, HIGH);
 
   calibratie();
-
-
-
   
 } 
 
@@ -101,6 +101,7 @@ void uitlezenJoystick(){
 
 void loop() {
   NOODSTOP();
+  tiltsensorNOODSTOP();
   Serial.print(pos);
   //communicatieHMI();
   if (noodstopstatus == false) {
@@ -120,9 +121,9 @@ void loop() {
     }
   }
 
+
   
-  
-  
+
 
 //Serial.println(noodstopstatus);
 
@@ -133,7 +134,7 @@ void joyeenmaalknopindrukken(){
    productoppakken();
   }
   joylaasteknopstatus = knop1;
- 
+
 }
 void handmatigeenmaalknopindrukken(){
   bool knop1 = knopuitlezen(handKnop);
@@ -352,6 +353,16 @@ void linksrechtsstop(){
 }
 
 
+void tiltsensorNOODSTOP(){
+  //Tiltsensor is actief noodstop moet aan (niet uit!)
+  if(digitalRead(tiltsensor)){
+    noodstopstatus= true;
+    digitalWrite(comnood, LOW);
+    stop();
+    naarVoren(0);
+  }
+}
+
 
 void NOODSTOP(){
   bool knop1 = knopuitlezen(noodknop);
@@ -373,7 +384,7 @@ void noodknopingedruk(){
     digitalWrite(comnood, LOW);
     stop();
     naarVoren(0);
-    
+
   }
 }
 
