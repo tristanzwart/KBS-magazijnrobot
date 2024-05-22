@@ -3,8 +3,9 @@
 
 #define irsensor A5
 
-#define joysw A5
+#define joysw A4
 #define comnood 4
+#define noodknop A3
 
 #define handmatigecom 9
 int aantal= 0;
@@ -35,6 +36,10 @@ bool handmatigelaasteknopstatus= false;
 bool blockBesturingBoven = false;
 bool blockBesturingBeneden = false;
 int handKnop = 5;
+
+//noodstop variabelen
+bool noodstopstatus = false;
+int noodlaasteknopstatus;
 
 
 void setup() {
@@ -91,23 +96,33 @@ void uitlezenJoystick(){
 } 
 
 void loop() {
-  linksrechtsstop();
-
-  //naarbestemming(1500);
-  handmatigeenmaalknopindrukken();
-  checkEindebaan();
-  if(handmatigeBesturing){
+  NOODSTOP();
+  communicatieHMI();
+  if(noodstopstatus == true) {
+   
     
-    uitlezenJoystick();
-    joyeenmaalknopindrukken();
-  }
-  else{
-    
-    //communicatieHMI();
-    naarbestemming(bestemming);
-  }
+  } else if (noodstopstatus == false) {
+    digitalWrite(comnood, LOW);
+    linksrechtsstop();
 
-Serial.println(digitalRead(joysw));
+    	//naarbestemming(1500);
+    handmatigeenmaalknopindrukken();
+    checkEindebaan();
+    if(handmatigeBesturing){
+      
+      uitlezenJoystick();
+      joyeenmaalknopindrukken();
+    }
+    else{
+      
+      
+      naarbestemming(bestemming);
+    }
+  }
+  
+  
+
+//Serial.println(noodstopstatus);
 
 }
 void joyeenmaalknopindrukken(){
@@ -141,9 +156,6 @@ void handmatigknopingedruk(){
     handmatigeBesturing= true;
     digitalWrite(handmatigecom, LOW);
   }
-
-
-
 }
 
 void stop(){
@@ -306,8 +318,12 @@ void checkEindebaan(){
 void communicatieHMI() {
   if (Serial.available() > 0) {
     String data = Serial.readStringUntil('\n'); // Lees de binnenkomende data tot newline
-//     serial.println() //om data terug te sturen naar java.
+    if (data == "stop") {
+      noodknopingedruk();
+    }
+    else{
     bestemming = data.toInt();
+    }
   }
 }
 
@@ -335,4 +351,29 @@ void productoppakken(){
  
 
 
+}
+
+
+void NOODSTOP(){
+  bool knop1 = knopuitlezen(noodknop);
+  if(knop1 != noodlaasteknopstatus && knop1 == HIGH ){    // zorgt ervoor dat de knop inet herhaalt (een signaal)
+    noodknopingedruk();
+  }
+  noodlaasteknopstatus = knop1;
+}
+
+void noodknopingedruk(){
+  if(noodstopstatus){
+    noodstopstatus= false;
+    digitalWrite(comnood, HIGH);
+    
+
+  }
+  else{
+    noodstopstatus= true;
+    digitalWrite(comnood, LOW);
+    stop();
+    naarVoren(0);
+    Serial.print("Stop");
+  }
 }
