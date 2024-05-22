@@ -17,9 +17,10 @@ float  eintergral = 0;
 int VRX_PIN =  A2; // Arduino pin connected to VRX pin
 
 
-int comnoodstop =4;
+int comnoodstop = 4;
 bool laasteknopstatus= false;
 int bestemming;
+bool noodstopstatus= false;
 
 bool handmatigeBesturing = false;
 bool blockBesturingLinks = false;
@@ -46,8 +47,9 @@ void setup() {
 }
 
 void loop() {
+  communicatieHMI();
   if(!digitalRead(comnoodstop)){
-  stoplinksrechts();
+  stop();
   }
   else{
   checkEindebaan();
@@ -58,7 +60,7 @@ void loop() {
     }
   else{
     handmatigeBesturing= false;
-    //communicatieHMI();
+    
   naarbestemming(bestemming);
   }
   }
@@ -102,6 +104,7 @@ void uitlezenJoystick(){
   else{
     stop();
   }
+  
 
 }
 
@@ -240,14 +243,16 @@ void checkEindebaan(){
 void communicatieHMI() {
   if (Serial.available() > 0) {
     String data = Serial.readStringUntil('\n'); // Lees de binnenkomende data tot newline
-//     serial.println() //om data terug te sturen naar java.
+  // if (data == "stop") {
+  //     if(noodstopstatus == false) {
+  //       noodstopstatus = true;
+  //     }
+  //     if(noodstopstatus == true) {
+  //       noodstopstatus = false;
+  //     }
+  //   }
     bestemming = data.toInt();
   }
 }
-void stoplinksrechts(){
-  if(!digitalRead(comnoodstop)){
-    stop();
 
-  }
-}
 

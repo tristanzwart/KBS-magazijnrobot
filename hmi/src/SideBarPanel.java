@@ -78,7 +78,7 @@ public class SideBarPanel extends JPanel implements ActionListener {
             gui.toonScherm("robot");
         }else if(e.getSource() == noodstop) {
             if (noodstop.getBackground().equals(Color.red)) {
-                gui.getArduino2().verstuurData("stop");
+                gui.getArduino1().verstuurData("stop");
             }
         }
     }
