@@ -1,104 +1,79 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public class BinPacking {
+    private static final int[] BOX_SIZES = {5, 15, 30};
 
-    public static void processOrder(List<List<Object>> products) {
-        // Step 1: Check how many products are in the order
-        int totalProducts = 0;
-        for (List<Object> product : products) {
-            totalProducts += (int) product.get(1);
-        }
-        System.out.println("Total products: " + totalProducts);
-
-        // Step 2: Sort the order by size (biggest product first)
-        products.sort((a, b) -> (int) b.get(2) - (int) a.get(2));
-
-        // Display sorted products
-        System.out.println("Sorted products: ");
-        for (List<Object> product : products) {
-            System.out.println("Product ID: " + product.get(0) + ", Quantity: " + product.get(1) + ", Size: " + product.get(2));
-        }
-
-        // Placeholder for package sizes (you can replace this with actual package sizes)
-        List<Integer> boxAfmetingen = Arrays.asList(5, 15, 30);
-        boxAfmetingen.sort(Comparator.naturalOrder());
-
-        // Display sorted package sizes
-        System.out.println("Sorted box sizes: " + boxAfmetingen);
-
-        // Step 3: Check for items bigger than the largest box size
-        int largestBoxSize = boxAfmetingen.get(boxAfmetingen.size() - 1);
-        boolean hasOversizedItems = false;
-
-        for (List<Object> product : products) {
-            int productSize = (int) product.get(2);
-            if (productSize > largestBoxSize) {
-                System.out.println("Error: Product " + product.get(0) + " with size " + productSize +
-                        " is larger than the largest box size " + largestBoxSize);
-                hasOversizedItems = true;
-            }
-        }
-
-        if (hasOversizedItems) {
-            System.out.println("Stopping program due to oversized items.");
+    public static void runAlgorithm(List<int[]> products) {
+        if (isAnyProductTooLarge(products)) {
+            System.out.println("Error: One or more products are too large to fit in the largest box size.");
             return;
         }
 
-        // Step 4: Distribute products into boxes
-        List<PackingBox> usedBoxes = new ArrayList<>();
-        usedBoxes.add(new PackingBox(boxAfmetingen.get(0)));  // Start with the smallest box size
+        sortProductsBySize(products);
+        List<Box> boxes = packProducts(products);
 
-        for (List<Object> product : products) {
-            String productId = (String) product.get(0);
-            int quantity = (int) product.get(1);
-            int size = (int) product.get(2);
+        printResults(boxes);
+    }
+
+    private static boolean isAnyProductTooLarge(List<int[]> products) {
+        int largestBoxSize = BOX_SIZES[BOX_SIZES.length - 1];
+        for (int[] product : products) {
+            if (product[2] > largestBoxSize) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static void sortProductsBySize(List<int[]> products) {
+        products.sort(Comparator.comparingInt(a -> -a[2]));
+    }
+
+    private static List<Box> packProducts(List<int[]> products) {
+        List<Box> boxes = new ArrayList<>();
+        Box currentBox = new Box(BOX_SIZES[0]);
+        boxes.add(currentBox);
+
+        for (int[] product : products) {
+            int productId = product[0];
+            int quantity = product[1];
+            int size = product[2];
 
             for (int i = 0; i < quantity; i++) {
                 boolean productPlaced = false;
 
-                // Try to place the product in the existing boxes
-                for (PackingBox box : usedBoxes) {
-                    if (box.canFit(size)) {
+                for (Box box : boxes) {
+                    if (box.getRemainingSpace() >= size) {
                         box.addProduct(productId, size);
                         productPlaced = true;
                         break;
                     }
                 }
 
-                // If the product was not placed, handle increasing the box size or adding a new box
                 if (!productPlaced) {
-                    for (PackingBox box : usedBoxes) {
-                        while (!box.canFit(size) && box.increaseSize(boxAfmetingen)) {
-                            // Increase the box size until it fits or reaches the maximum size
-                        }
-                        if (box.canFit(size)) {
-                            box.addProduct(productId, size);
-                            productPlaced = true;
-                            break;
-                        }
+                    while (currentBox.getRemainingSpace() < size && currentBox.increaseSize(BOX_SIZES)) {
+                        // Increase the current box size until it fits or reaches the maximum size
                     }
-                }
-
-                if (!productPlaced) {
-                    PackingBox newBox = new PackingBox(boxAfmetingen.get(0));
-                    newBox.addProduct(productId, size);
-                    usedBoxes.add(newBox);
+                    if (currentBox.getRemainingSpace() >= size) {
+                        currentBox.addProduct(productId, size);
+                    } else {
+                        currentBox = new Box(BOX_SIZES[0]);
+                        currentBox.addProduct(productId, size);
+                        boxes.add(currentBox);
+                    }
                 }
             }
         }
-
-        // Print results
-        printResults(usedBoxes);
+        return boxes;
     }
 
-    public static void printResults(List<PackingBox> usedBoxes) {
-        System.out.println("Total boxes used: " + usedBoxes.size());
-        for (int i = 0; i < usedBoxes.size(); i++) {
-            PackingBox box = usedBoxes.get(i);
-            System.out.println("Box " + (i + 1) + ": Size " + box.getSize() + " (Filled: " + box.getCurrentFill() + ")");
-            for (Map.Entry<String, Integer> entry : box.getProducts().entrySet()) {
-                System.out.println("  Product ID: " + entry.getKey() + ", Quantity: " + entry.getValue());
-            }
+    private static void printResults(List<Box> boxes) {
+        System.out.println("Total boxes used: " + boxes.size());
+        for (int i = 0; i < boxes.size(); i++) {
+            System.out.println("Box " + (i + 1) + ":");
+            System.out.print(boxes.get(i).toString());
         }
     }
 }

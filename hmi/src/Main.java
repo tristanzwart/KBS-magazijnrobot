@@ -25,15 +25,13 @@ public class Main {
 //                pakbon.genereerPakbon("pakbon.txt");
 
 
-        //testcode
-        List<List<Object>> products = new ArrayList<>();
-        products.add(Arrays.asList("ProductID1", 10, 5));  // Product ID, Quantity, Size
-        products.add(Arrays.asList("ProductID2", 3, 5));
-        products.add(Arrays.asList("ProductID3", 12, 1));
-        products.add(Arrays.asList("ProductID4", 6, 10));
+        //testcode bin packing algoritme
+        List<int[]> products = new ArrayList<>();
+        products.add(new int[]{1, 5, 10});  // Product ID, Quantity, Size
+        products.add(new int[]{2, 3, 15});
+        products.add(new int[]{3, 1, 25});
 
-        // Call the function with the example input
-        BinPacking.processOrder(products);
+        BinPacking.runAlgorithm(products);
 
 
 
