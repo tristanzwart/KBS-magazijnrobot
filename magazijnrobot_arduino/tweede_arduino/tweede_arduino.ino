@@ -47,6 +47,11 @@ bool oppakken = false;
 int bestemmingoppakken;
 bool joylaasteknopstatus = true;
 
+unsigned long begintime = millis();
+int interval1 = 1200;
+int interval2 = 300;
+
+
 
 void setup() {
   Serial.begin(9600); // Start de seriële communicatie op 9600 baud
@@ -80,8 +85,8 @@ void setup() {
 void uitlezenJoystick(){
   
   int yValue = analogRead(VRY_PIN);
-  // Serial.print("y= ");
-  // Serial.println(yValue);
+  //Serial.print("y= ");
+  //Serial.println(yValue);
 
   
   if (yValue < 480){
@@ -100,27 +105,35 @@ void uitlezenJoystick(){
 } 
 
 void loop() {
-  NOODSTOP();
-  tiltsensorNOODSTOP();
-  Serial.print(pos);
-  //communicatieHMI();
-  if (noodstopstatus == false) {
-    digitalWrite(comnood, LOW);
-    linksrechtsstop();
+  // NOODSTOP();
+  // Serial.print(oppakken);
+  //  //tiltsensorNOODSTOP();
+  // //Serial.print(pos);
+  // //communicatieHMI();
+  // if (noodstopstatus == false) {
+    
+  //   digitalWrite(comnood, LOW);
+  //   linksrechtsstop();
+    
 
-    	//naarbestemming(1500);
-    handmatigeenmaalknopindrukken();
-    checkEindebaan();
-    if(handmatigeBesturing){
+  //   	//naarbestemming(1500);
+  //   handmatigeenmaalknopindrukken();
+  //   checkEindebaan();
+  //   if(oppakken){
+  //     productoppakken();
+  //     begintime = millis();
+  //   }
+  //   if(handmatigeBesturing){
       
-      uitlezenJoystick();
-      joyeenmaalknopindrukken();
-    }
-    else{
-      naarbestemming(bestemming);
-    }
-  }
-
+  //     uitlezenJoystick();
+  //     joyeenmaalknopindrukken();
+  //   }
+  //   else{
+  //     naarbestemming(bestemming);
+  //   }
+  // }
+  
+productoppakken();
 
   
 
@@ -131,7 +144,8 @@ void loop() {
 void joyeenmaalknopindrukken(){
   bool knop1 = knopuitlezen(joysw);
   if(knop1 != joylaasteknopstatus && knop1 == HIGH ){    // zorgt ervoor dat de knop inet herhaalt (een signaal)
-   productoppakken();
+   oppakken = true;
+   //currenttime= millis();
   }
   joylaasteknopstatus = knop1;
 
@@ -224,7 +238,7 @@ void naarbestemming(int target){
 
  float dedt = (e-eprev)/ (deltaT);
  
- eintergral = eintergral = e*deltaT;
+ eintergral = eintergral + e*deltaT;
 
  float u = kp*e + kd*dedt + ki*eintergral;
 
@@ -388,17 +402,28 @@ void noodknopingedruk(){
   }
 }
 
-void productoppakken(){
-  digitalWrite(comnood, LOW);
-  naarVoren(150);
-  delay(1200);
-  naarVoren(0);
-  naarBoven(255);
-  delay(200);
-  naarBoven(0);
-  naarAchteren(150);
-  delay(1200);
-  naarAchteren(0);
-  digitalWrite(comnood, HIGH);
-
+void productoppakken() {
+  unsigned long elapsedTime = millis() - begintime;
+  
+  
+  if (elapsedTime < 2000) {
+    // Move forward for the first 1200ms
+    Serial.println("Moving forward...");
+    naarVoren(150);
+  } else if (elapsedTime >= 2000 && elapsedTime < 2200) {
+    // Stop moving forward and move upward between 1200ms and 1900ms
+    Serial.println("Stopping forward movement, moving upward...");
+    naarVoren(0);
+    naarBoven(255);
+  } else if (elapsedTime >= 2200 && elapsedTime < 4200) {
+    // Stop moving upward and move backward between 1900ms and 3200ms
+    Serial.println("Stopping upward movement, moving backward...");
+    naarBoven(0);
+    naarAchteren(150);
+  } else if (elapsedTime >= 3200) {
+    // Stop moving backward after 3200ms and finish the sequence
+    Serial.println("Stopping backward movement, sequence complete...");
+    naarAchteren(0);
+    oppakken = false;
+  }
 }

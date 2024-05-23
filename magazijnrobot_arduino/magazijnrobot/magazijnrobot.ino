@@ -90,6 +90,7 @@ void loop() {
 void uitlezenJoystick(){
 
   int xValue = analogRead(VRX_PIN);
+  //Serial.println(xValue);
 
   if(xValue < 500){
     stop();
