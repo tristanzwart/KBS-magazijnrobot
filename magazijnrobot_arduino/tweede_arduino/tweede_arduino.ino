@@ -107,7 +107,7 @@ void uitlezenJoystick(){
 } 
 
 void loop() {
-  Serial.println(oppakken);
+  //Serial.println(oppakken);
    NOODSTOP();
    
  tiltsensorNOODSTOP();
@@ -345,6 +345,11 @@ void communicatieHMI() {
     String data = Serial.readStringUntil('\n'); // Lees de binnenkomende data tot newline
     if (data == "stop") {
       noodknopingedruk();
+    }
+    else if(data =="oppakken"){
+      oppakken = true;
+      oudehandmatigebesturing = handmatigeBesturing;
+      begintime = millis();
     }
     else{
     bestemming = data.toInt();
