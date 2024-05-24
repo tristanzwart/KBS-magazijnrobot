@@ -152,7 +152,7 @@ void naarbestemming(int target){
 
  float dedt = (e-eprev)/ (deltaT);
 
- eintergral = eintergral = e*deltaT;
+ eintergral = eintergral + e*deltaT;
 
  float u = kp*e + kd*dedt + ki*eintergral;
 

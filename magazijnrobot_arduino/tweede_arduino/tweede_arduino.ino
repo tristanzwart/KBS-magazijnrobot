@@ -302,6 +302,11 @@ void setMotor(int dir, int pwm, int pwmpin, int dirpin){
 
 void calibratie(){
   //Beweeg de robot helemaal naar rechts totdat de schakelaar wordt ingedrukt
+   while(getVorkAfstand() >= 7){
+    naarAchteren(150);
+  }
+  analogWrite(pwmPinVoorAchter, 0);
+  
   while(!digitalRead(swonder)){
     naarBeneden(100);
     
@@ -314,6 +319,7 @@ void calibratie(){
     naarBoven(255);
   }
   stop();
+ 
 
 }
 
