@@ -42,6 +42,10 @@ void setup() {
   pinMode(2, INPUT);
   pinMode(comnoodstop, INPUT);
 
+  while (digitalRead(comnoodstop) == LOW) {
+    
+  }
+
   calibratie();
 
 }

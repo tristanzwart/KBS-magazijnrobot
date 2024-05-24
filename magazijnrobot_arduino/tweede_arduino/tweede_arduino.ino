@@ -77,7 +77,7 @@ void setup() {
 
   attachInterrupt(digitalPinToInterrupt(ENCA),leesEncoder,RISING);
   digitalWrite(handmatigecom, HIGH);
-  digitalWrite(comnood, HIGH);
+  
 
   calibratie();
   
@@ -319,8 +319,7 @@ void calibratie(){
     naarBoven(255);
   }
   stop();
- 
-
+  digitalWrite(comnood, HIGH);
 }
 
 void checkEindebaan(){
