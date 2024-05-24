@@ -47,8 +47,8 @@ void setup() {
 }
 
 void loop() {
-  Serial.println(digitalRead(handmatigecom));
-  //communicatieHMI();
+  //Serial.println(digitalRead(handmatigecom));
+  communicatieHMI();
   if(!digitalRead(comnoodstop)){
   stop();
   }
@@ -91,7 +91,7 @@ void loop() {
 void uitlezenJoystick(){
 
   int xValue = analogRead(VRX_PIN);
-  Serial.println(xValue);
+  //Serial.println(xValue);
 
   if(xValue < 500){
     stop();
