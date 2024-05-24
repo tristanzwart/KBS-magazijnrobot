@@ -39,6 +39,7 @@ public class GUI extends JFrame{
 
         table = new JTable(new DefaultTableModel(data, columnNames));
         table.setDefaultEditor(Object.class, null);
+        table.getTableHeader().setReorderingAllowed(false);
 
 
         // Set selection mode
