@@ -24,16 +24,21 @@ public class Main {
 //                // Genereer het pakbon tekstbestand
 //                pakbon.genereerPakbon("pakbon.txt");
 
+        //testcode BinPacking
+        List<List<Integer>> itemsData = new ArrayList<>();
+        itemsData.add(List.of(1, 3, 10)); // itemID, aantalItems, afmeting
+        itemsData.add(List.of(2, 2, 5));
+        itemsData.add(List.of(3, 1, 20));
 
-        //testcode bin packing algoritme
-        List<int[]> products = new ArrayList<>();
-        products.add(new int[]{1, 5, 10});  // Product ID, Quantity, Size
-        products.add(new int[]{2, 3, 15});
-        products.add(new int[]{3, 1, 25});
+        BinPacking binPacking = new BinPacking(50); // Aangenomen box capaciteit is 50
+        List<Box> verpakteBoxen = binPacking.besteFit(itemsData);
 
-        BinPacking.runAlgorithm(products);
-
-
+        for (Box box : verpakteBoxen) {
+            System.out.println("Box ID: " + box.getId() + " bevat items:");
+            for (List<Integer> item : box.getItems()) {
+                System.out.println("Item ID: " + item.get(0) + ", Aantal Items: " + item.get(1) + ", Afmeting: " + item.get(2));
+            }
+        }
 
 
 

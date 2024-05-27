@@ -2,58 +2,41 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Box {
-    private int size;
-    private int filledTo;
-    private List<int[]> products;
+    private int id;
+    private int capaciteit;
+    private int huidigeBelasting;
+    private List<List<Integer>> items; // Lijst van [ItemID, AantalItems, Afmeting]
 
-    public Box(int size) {
-        this.size = size;
-        this.filledTo = 0;
-        this.products = new ArrayList<>();
+    public Box(int id, int capaciteit) {
+        this.id = id;
+        this.capaciteit = capaciteit;
+        this.huidigeBelasting = 0;
+        this.items = new ArrayList<>();
     }
 
-    public int getSize() {
-        return size;
+    public int getId() {
+        return id;
     }
 
-    public int getFilledTo() {
-        return filledTo;
+    public int getCapaciteit() {
+        return capaciteit;
     }
 
-    public void addProduct(int productId, int productSize) {
-        this.products.add(new int[]{productId, 1, productSize});
-        this.filledTo += productSize;
+    public int getHuidigeBelasting() {
+        return huidigeBelasting;
     }
 
-    public int getRemainingSpace() {
-        return size - filledTo;
+    public List<List<Integer>> getItems() {
+        return items;
     }
 
-    public boolean increaseSize(int[] boxSizes) {
-        int currentIndex = findCurrentIndex(boxSizes);
-        if (currentIndex < boxSizes.length - 1) {
-            this.size = boxSizes[currentIndex + 1];
+    public boolean voegItemToe(List<Integer> item) {
+        int afmeting = item.get(2);
+        if (huidigeBelasting + afmeting <= capaciteit) {
+            items.add(item);
+            huidigeBelasting += afmeting;
             return true;
         }
         return false;
-    }
-
-    private int findCurrentIndex(int[] boxSizes) {
-        for (int i = 0; i < boxSizes.length; i++) {
-            if (boxSizes[i] == this.size) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Box Size: ").append(size).append(", Filled To: ").append(filledTo).append("\n");
-        for (int[] product : products) {
-            sb.append("  Product ID: ").append(product[0]).append(", Quantity: ").append(product[1]).append(", Size: ").append(product[2]).append("\n");
-        }
-        return sb.toString();
     }
 }
