@@ -214,6 +214,7 @@ public class GUI extends JFrame{
         } else if (schermNummer == 2) {
             bottomBar.addButton("Verversen");
             bottomBar.addButton("bekijken");
+            bottomBar.addButton("inladen");
         }
         bottomBar.revalidate();
         bottomBar.repaint();
