@@ -42,6 +42,7 @@ int handKnop = 5;
 
 //noodstop variabelen
 bool noodstopstatus = false;
+bool vorigeNoodstopStatus = false;
 int noodlaasteknopstatus;
 
 bool oppakken = false;
@@ -114,6 +115,7 @@ void loop() {
    //Print de positie voor de hmi
    Serial.println(pos);
    communicatieHMI();
+   checkRobotStatus();
    if (noodstopstatus == false) {
     
      digitalWrite(comnood, LOW);
@@ -138,6 +140,7 @@ void loop() {
       naarbestemming(bestemming);
     }
     }
+    
   }
   
 
@@ -152,6 +155,7 @@ void joyeenmaalknopindrukken(){
   bool knop1 = knopuitlezen(joysw);
   if(knop1 != joylaasteknopstatus && knop1 == HIGH ){    // zorgt ervoor dat de knop inet herhaalt (een signaal)
    oppakken = true;
+   Serial.println("oppakken");
    oudehandmatigebesturing = handmatigeBesturing;
    begintime = millis();
   }
@@ -425,7 +429,6 @@ void productoppakken() {
   
   
   if (elapsedTime < 1400) {
-
     
     handmatigeBesturing = false;
     // Move forward for thefirst 1200ms
@@ -447,5 +450,19 @@ void productoppakken() {
     naarAchteren(0);
     handmatigeBesturing = oudehandmatigebesturing;
     oppakken = false;
+    Serial.println("bewegen");
   }
+}
+
+//Functies voor status bepaling en printing
+void checkRobotStatus(){
+  if(noodstopstatus != vorigeNoodstopStatus){
+    vorigeNoodstopStatus = noodstopstatus;
+    if(vorigeNoodstopStatus){
+      Serial.println("noodstop");
+    }else{
+      Serial.println("vrijgegeven");
+    }
+  }
+  
 }
