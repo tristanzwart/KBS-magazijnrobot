@@ -94,7 +94,7 @@ public class Database {
         List<Object[]> rows = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(url, user, password);
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT h.StockItemLocation, s.StockItemID, h.QuantityOnHand, StockItemName FROM stockitems s JOIN stockitemholdings h ON s.StockItemID = h.StockItemID ORDER BY StockItemID");) {
+             ResultSet rs = stmt.executeQuery("SELECT h.StockItemLocation, s.StockItemID, h.QuantityOnHand, StockItemName FROM stockitems s JOIN stockitemholdings h ON s.StockItemID = h.StockItemID WHERE h.StockItemLocation IS NOT NULL ORDER BY StockItemID");) {
 
             ResultSetMetaData rsmd = rs.getMetaData();
             int columnCount = rsmd.getColumnCount();
