@@ -42,11 +42,16 @@ void setup() {
   pinMode(2, INPUT);
   pinMode(comnoodstop, INPUT);
 
+  while (digitalRead(comnoodstop) == LOW) {
+    
+  }
+
   calibratie();
 
 }
 
 void loop() {
+  //Serial.println(digitalRead(handmatigecom));
   communicatieHMI();
   if(!digitalRead(comnoodstop)){
   stop();
@@ -90,6 +95,7 @@ void loop() {
 void uitlezenJoystick(){
 
   int xValue = analogRead(VRX_PIN);
+  //Serial.println(xValue);
 
   if(xValue < 500){
     stop();
@@ -150,7 +156,7 @@ void naarbestemming(int target){
 
  float dedt = (e-eprev)/ (deltaT);
 
- eintergral = eintergral = e*deltaT;
+ eintergral = eintergral + e*deltaT;
 
  float u = kp*e + kd*dedt + ki*eintergral;
 

@@ -32,6 +32,7 @@ float  eintergral = 0;
 int bestemming=80;
 
 bool handmatigeBesturing = false;
+bool oudehandmatigebesturing = false;
 
 
 bool handmatigelaasteknopstatus= false;
@@ -42,6 +43,15 @@ int handKnop = 5;
 //noodstop variabelen
 bool noodstopstatus = false;
 int noodlaasteknopstatus;
+
+bool oppakken = false;
+int bestemmingoppakken;
+bool joylaasteknopstatus = true;
+
+unsigned long begintime ;
+int interval1 = 1200;
+int interval2 = 300;
+
 
 
 void setup() {
@@ -67,6 +77,7 @@ void setup() {
 
   attachInterrupt(digitalPinToInterrupt(ENCA),leesEncoder,RISING);
   digitalWrite(handmatigecom, HIGH);
+  
 
   calibratie();
   
@@ -76,8 +87,8 @@ void setup() {
 void uitlezenJoystick(){
   
   int yValue = analogRead(VRY_PIN);
-  // Serial.print("y= ");
-  // Serial.println(yValue);
+  //Serial.print("y= ");
+  //Serial.println(yValue);
 
   
   if (yValue < 480){
@@ -96,42 +107,55 @@ void uitlezenJoystick(){
 } 
 
 void loop() {
-  NOODSTOP();
-  tiltsensorNOODSTOP();
-  communicatieHMI();
-  if(noodstopstatus == true) {
+  //Serial.println(oppakken);
+   NOODSTOP();
    
+ tiltsensorNOODSTOP();
+ //Serial.print(pos);
+   communicatieHMI();
+   if (noodstopstatus == false) {
     
-  } else if (noodstopstatus == false) {
-    digitalWrite(comnood, LOW);
-    linksrechtsstop();
+     digitalWrite(comnood, LOW);
+     linksrechtsstop();
+     handmatigeenmaalknopindrukken();
+    
 
-    	//naarbestemming(1500);
-    handmatigeenmaalknopindrukken();
-    checkEindebaan();
-    if(handmatigeBesturing){
+     	//naarbestemming(1500);
+  
+   checkEindebaan();
+    if(oppakken){
+      productoppakken();
       
-      uitlezenJoystick();
-      joyeenmaalknopindrukken();
     }
     else{
+    if(handmatigeBesturing){
       
-      
+     uitlezenJoystick();
+      joyeenmaalknopindrukken();
+}
+    else{
       naarbestemming(bestemming);
+    }
     }
   }
   
+
+
   
+
 
 //Serial.println(noodstopstatus);
 
 }
 void joyeenmaalknopindrukken(){
   bool knop1 = knopuitlezen(joysw);
-  if(knop1 == LOW ){    // zorgt ervoor dat de knop inet herhaalt (een signaal)
-    productoppakken();
+  if(knop1 != joylaasteknopstatus && knop1 == HIGH ){    // zorgt ervoor dat de knop inet herhaalt (een signaal)
+   oppakken = true;
+   oudehandmatigebesturing = handmatigeBesturing;
+   begintime = millis();
   }
-  
+  joylaasteknopstatus = knop1;
+
 }
 void handmatigeenmaalknopindrukken(){
   bool knop1 = knopuitlezen(handKnop);
@@ -161,7 +185,7 @@ void handmatigknopingedruk(){
 
 void stop(){
   analogWrite(pwmPinBovenOnder, 0);
-  analogWrite(pwmPinVoorAchter, 0);
+  //analogWrite(pwmPinVoorAchter, 0);
 }
 
 
@@ -221,7 +245,7 @@ void naarbestemming(int target){
 
  float dedt = (e-eprev)/ (deltaT);
  
- eintergral = eintergral = e*deltaT;
+ eintergral = eintergral + e*deltaT;
 
  float u = kp*e + kd*dedt + ki*eintergral;
 
@@ -262,10 +286,10 @@ void leesEncoder(){
   int b = digitalRead(ENCB);
   //Serial.println(b);
   if(b>0){
-    pos--;
+    pos++;
   }
   else{
-    pos++;
+    pos--;
 
   }
 }
@@ -278,6 +302,11 @@ void setMotor(int dir, int pwm, int pwmpin, int dirpin){
 
 void calibratie(){
   //Beweeg de robot helemaal naar rechts totdat de schakelaar wordt ingedrukt
+   while(getVorkAfstand() >= 7){
+    naarAchteren(150);
+  }
+  analogWrite(pwmPinVoorAchter, 0);
+  
   while(!digitalRead(swonder)){
     naarBeneden(100);
     
@@ -290,7 +319,7 @@ void calibratie(){
     naarBoven(255);
   }
   stop();
-
+  digitalWrite(comnood, HIGH);
 }
 
 void checkEindebaan(){
@@ -322,6 +351,11 @@ void communicatieHMI() {
     if (data == "stop") {
       noodknopingedruk();
     }
+    else if(data =="oppakken"){
+      oppakken = true;
+      oudehandmatigebesturing = handmatigeBesturing;
+      begintime = millis();
+    }
     else{
     bestemming = data.toInt();
     }
@@ -348,11 +382,7 @@ void linksrechtsstop(){
     digitalWrite(comnood, HIGH);
   }
 }
-void productoppakken(){
- 
 
-
-}
 
 void tiltsensorNOODSTOP(){
   //Tiltsensor is actief noodstop moet aan (niet uit!)
@@ -361,7 +391,6 @@ void tiltsensorNOODSTOP(){
     digitalWrite(comnood, LOW);
     stop();
     naarVoren(0);
-    Serial.print("Stop");
   }
 }
 
@@ -386,6 +415,36 @@ void noodknopingedruk(){
     digitalWrite(comnood, LOW);
     stop();
     naarVoren(0);
-    Serial.print("Stop");
+
+  }
+}
+
+void productoppakken() {
+  unsigned long elapsedTime = millis() - begintime;
+  
+  
+  if (elapsedTime < 1400) {
+
+    
+    handmatigeBesturing = false;
+    // Move forward for thefirst 1200ms
+    //Serial.println("Moving forward...");
+    naarVoren(150);
+  } else if (elapsedTime >= 1400 && elapsedTime < 1800) {
+    // Stop moving forward and move upward between 1200ms and 1900ms
+    //Serial.println("Stopping forward movement, moving upward...");
+    naarVoren(0);
+    naarBoven(255);
+  } else if (elapsedTime >= 1800 && elapsedTime < 3200) {
+    // Stop moving upward and move backward between 1900ms and 3200ms
+    //Serial.println("Stopping upward movement, moving backward...");
+    naarBoven(0);
+    naarAchteren(150);
+  } else if (elapsedTime >= 3200) {
+    // Stop moving backward after 3200ms and finish the sequence
+    //Serial.println("Stopping backward movement, sequence complete...");
+    naarAchteren(0);
+    handmatigeBesturing = oudehandmatigebesturing;
+    oppakken = false;
   }
 }
