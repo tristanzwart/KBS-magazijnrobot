@@ -2,8 +2,10 @@ import com.fazecast.jSerialComm.*;
 
 public class ArduinoCom {
     private SerialPort comPort;
+    private int arduinoNummer;
+    private StringBuilder dataBuilder = new StringBuilder();
 
-    public ArduinoCom(String comPoort) {
+    public ArduinoCom(String comPoort, int arduinoNummer) {
         comPort = SerialPort.getCommPort(comPoort); // Gebruikt de Linux seriële poort. Voor windows gebruik COM poort
         comPort.setBaudRate(9600);
         if (!comPort.openPort()) {
@@ -17,6 +19,30 @@ public class ArduinoCom {
         } catch (InterruptedException e) {
             System.out.println("Een fout opgetreden tijdens het wachten: " + e.getMessage());
         }
+
+        comPort.addDataListener(new SerialPortDataListener() {
+            @Override
+            public int getListeningEvents() {
+                return SerialPort.LISTENING_EVENT_DATA_AVAILABLE;
+            }
+
+            @Override
+            public void serialEvent(SerialPortEvent event) {
+                if (event.getEventType() != SerialPort.LISTENING_EVENT_DATA_AVAILABLE)
+                    return;
+                byte[] newData = new byte[comPort.bytesAvailable()];
+                int numRead = comPort.readBytes(newData, newData.length);
+                dataBuilder.append(new String(newData, 0, numRead));
+                if (dataBuilder.toString().contains("\n")) {
+                    String dataLine = dataBuilder.toString().split("\n")[0];
+                    dataBuilder.delete(0, dataLine.length() + 1);
+
+                    //Print de ontvangen data voor debug doeleinden
+                    System.out.println("Ontvangen van Arduino" + arduinoNummer + ": " + dataLine);
+
+                }
+            }
+        });
     }
 
 

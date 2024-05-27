@@ -51,7 +51,8 @@ void setup() {
 }
 
 void loop() {
-  //Serial.println(digitalRead(handmatigecom));
+  //Print de positie voor de hmi
+  Serial.println(pos);
   communicatieHMI();
   if(!digitalRead(comnoodstop)){
   stop();
