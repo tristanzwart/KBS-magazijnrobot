@@ -1,0 +1,11 @@
+Pakbon
+====================
+Verzender: Nerdy Gadgets
+Ontvanger: XYZ Winkel
+Datum: 22-05-2024
+====================
+Artikelcode | Omschrijving         | Aantal  
+-----------------------------
+001        | Artikel A            | 10      
+002        | Artikel B            | 5       
+003        | Artikel C            | 20      
