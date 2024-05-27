@@ -80,6 +80,7 @@ public class BottomBarPanel extends JPanel implements ActionListener {
                 gui.updateOrderTabelData();
             }
 
+
         } else if (e.getSource() == artikelAanpassen) {
             //TODO: Call modal dialoge
             artikelDialog.toonDialog("Artikel Aanpassen", String.valueOf(HuidigeVoorraad));

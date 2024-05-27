@@ -237,6 +237,23 @@ public class Database {
         }
         return stockItemName;
     }
+    public static String getlocatie(int StockItemID) {
+        String stockItemloc = null;
+        try (Connection conn = DriverManager.getConnection(url, user, password)) {
+            String query = "SELECT StockItemLocation FROM stockitemholdings WHERE StockItemID = ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                pstmt.setInt(1, StockItemID);
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    if (rs.next()) {
+                        stockItemloc = rs.getString("StockItemLocation");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching stock item loc");
+        }
+        return stockItemloc;
+    }
 
 
 

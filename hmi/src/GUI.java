@@ -198,6 +198,7 @@ public class GUI extends JFrame{
             RobotPanel robotPanel = new RobotPanel(this);
             mainPanel.setBorder(BorderFactory.createEmptyBorder(210, 250, 0 ,0));
             mainPanel.add(robotPanel);
+            bottomBar.removeAll();
         }
 
         //Revalidate en repaint
@@ -214,8 +215,8 @@ public class GUI extends JFrame{
             bottomBar.addButton("Verversen");
             bottomBar.addButton("bekijken");
         }
-
         bottomBar.revalidate();
+        bottomBar.repaint();
     }
 
     public void giveSideFeedback(String feedback) {
