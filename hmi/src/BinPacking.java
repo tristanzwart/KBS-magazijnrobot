@@ -3,23 +3,26 @@ import java.util.List;
 
 public class BinPacking {
     private int boxCapaciteit = 30; // Grote van elke doos
-    private static List<List<Integer>> itemsData = new ArrayList<>();
+    private  List<List<Integer>> itemsData = new ArrayList<>();
+    private Database database;
+
 
     // Constructor vor starten van BinPacking
-    public BinPacking(int boxCapaciteit) {
-        this.boxCapaciteit = boxCapaciteit;
+    public BinPacking(int OrderID) {
+        database = new Database();
+        itemsData = database.voorBinPacking(OrderID);
     }
 
-    public static void UpdateItemData(int ID, int quantity, int afmeting){
-        itemsData.add(List.of(ID, quantity, afmeting));
-    }
+//    public static void UpdateItemData(int ID, int quantity, int afmeting){
+//        itemsData.add(List.of(ID, quantity, afmeting));
+//    }
 
     public void ClearItemsData(){
         itemsData.clear();
     }
 
     // Best Fit algoritme om items in dozen te plaatsen
-    public List<Box> besteFit(List<List<Integer>> itemsData) {
+    public List<Box> besteFit() {
         List<Box> boxen = new ArrayList<>();
         int boxId = 1;
 

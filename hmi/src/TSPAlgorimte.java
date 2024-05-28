@@ -1,3 +1,4 @@
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -107,8 +108,9 @@ public class TSPAlgorimte {
         return puntenlijsten;
     }
 
-    public void calculateAllRoutes(List<Box> verpakteBoxen) {
+    public List<String[]> calculateAllRoutes(List<Box> verpakteBoxen) {
         List<String[]> puntenlijsten = BinToTSP(verpakteBoxen);
+        List<String[]> kortstepuntenlijsten = new ArrayList<>();
 
         for (String[] puntenlijst : puntenlijsten) {
             List<String> puntenLijst = new ArrayList<>();
@@ -120,8 +122,10 @@ public class TSPAlgorimte {
 
             if (!puntenLijst.isEmpty()) {
                 ArrayList<String> bestRoute = kortsteroute(puntenLijst);
-                System.out.println("Best route for current list: " + bestRoute);
+                kortstepuntenlijsten.add(bestRoute.toArray(new String[0]));
             }
         }
+
+        return kortstepuntenlijsten;
     }
 }

@@ -256,31 +256,29 @@ public class Database {
     }
 
 
-    public Object[][] voorBinPacking(int OrderID) {
-        List<Object[]> rows = new ArrayList<>();
+    public List<List<Integer>> voorBinPacking(int OrderID) {
+        List<List<Integer>> result = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(url, user, password);
              PreparedStatement pstmt = conn.prepareStatement("SELECT o.StockItemID, o.Quantity, s.InternalComments FROM orderlines o JOIN stockitems s ON o.StockItemID = s.StockItemID WHERE o.OrderID = ?")) {
             pstmt.setInt(1, OrderID); // Set the OrderID parameter in the prepared statement
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    Object[] row = new Object[3]; // Number of columns is 3
-                    for (int i = 1; i <= 3; i++) {
-                        row[i-1] = rs.getObject(i);
-                    }
-                    rows.add(row);
+                    List<Integer> row = new ArrayList<>(3);
+                    row.add(rs.getInt("StockItemID"));
+                    row.add(rs.getInt("Quantity"));
+                    row.add(Integer.parseInt(rs.getString("InternalComments"))); // Ensure InternalComments can be converted to an integer
+
+                    result.add(row);
 
                     // Convert InternalComments to an integer and call UpdateItemData
-                    int stockItemID = (int) row[0];
-                    int quantity = (int) row[1];
-                    int afmeting = Integer.parseInt((String) row[2]); // Ensure InternalComments can be converted to an integer
-                    BinPacking.UpdateItemData(stockItemID, quantity, afmeting);
+
                 }
             }
         } catch (SQLException e) {
             System.out.println("Error fetching order lines: " + e.getMessage());
         }
-        return rows.toArray(new Object[0][]);
+        return result;
     }
 }
 
