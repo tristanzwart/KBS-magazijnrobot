@@ -43,12 +43,12 @@ public class Main {
 //        List<Bin> verpakteBoxen = binPacking.besteFit(itemsData);
 //
 //        // Loop door de verpakte dozen en print de inhoud
-//        for (Bin box : verpakteBoxen) {
-//            System.out.println("Bin ID: " + box.getId() + " bevat items:");
-//            for (List<Integer> item : box.getItems()) {
-//                System.out.println("Item ID: " + item.get(0) + ", Aantal Items: " + item.get(1) + ", Afmeting: " + item.get(2));
-//            }
-//        }
+        for (Bin box : verpakteBoxen) {
+            System.out.println("Bin ID: " + box.getId() + " bevat items:");
+            for (List<Integer> item : box.getItems()) {
+                item.get(0);
+            }
+        }
 //
 
 

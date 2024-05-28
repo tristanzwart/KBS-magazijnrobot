@@ -2,6 +2,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class OrderInladenPanel extends JPanel {
     private JPanel magazijn;
@@ -9,7 +10,7 @@ public class OrderInladenPanel extends JPanel {
     //Tabel voor de dozen
     private ArrayList<JTable> doosTabellen;
 
-    public OrderInladenPanel(int OrderID) {
+    public OrderInladenPanel(List<Bin> bin) {
         doosTabellen = new ArrayList<>();
             // Standaard waarden
         setPreferredSize(new Dimension(1500, 900));
@@ -34,7 +35,7 @@ public class OrderInladenPanel extends JPanel {
 
         //Visualisatie van de dozen
         //Voor elke doos deze for loop uitvoeren
-        for(int i = 0; i < 5; i++) {
+        for(int i = 0; i < bin.size(); i++) {
             JLabel doosLabel = new JLabel("Doos " + i);
             doosLabel.setBounds(1100, 30 + i * 150, 100, 50);
 
@@ -42,11 +43,9 @@ public class OrderInladenPanel extends JPanel {
 
             //Tabel voor de doos maken
 
-            Object[][] data = {{1, "test", 12},
-                    {2, "test2", 13},
-                    {3, "test3", 14},
-                    {4, "test4", 15},
-                    {5, "test5", 16}};
+            Object[][] data = {};
+
+
 
             String[] columnNames = {"Artikelnummer", "Artikelnaam", "Op vooraad"};
 
