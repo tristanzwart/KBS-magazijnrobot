@@ -22,8 +22,8 @@ public class BinPacking {
     }
 
     // Best Fit algoritme om items in dozen te plaatsen
-    public List<Box> besteFit() {
-        List<Box> boxen = new ArrayList<>();
+    public List<Bin> besteFit() {
+        List<Bin> boxen = new ArrayList<>();
         int boxId = 1;
 
         // Loop door elk item in de lijst
@@ -34,8 +34,8 @@ public class BinPacking {
 
             // Probeer het item in een bestaande doos te plaatsen
             boolean itemGeplaatst = false;
-            for (Box box : boxen) {
-                if (box.voegItemToe(itemData)) {
+            for (Bin bin : boxen) {
+                if (bin.voegItemToe(itemData)) {
                     itemGeplaatst = true;
                     break;
                 }
@@ -43,9 +43,9 @@ public class BinPacking {
 
             // Als het item niet in een bestaande doos past, maak dan een nieuwe doos
             if (!itemGeplaatst) {
-                Box nieuweBox = new Box(boxId++, boxCapaciteit);
-                nieuweBox.voegItemToe(itemData);
-                boxen.add(nieuweBox);
+                Bin nieuweBin = new Bin(boxId++, boxCapaciteit);
+                nieuweBin.voegItemToe(itemData);
+                boxen.add(nieuweBin);
             }
         }
 
