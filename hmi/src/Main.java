@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-       // GUI gui = new GUI();
+       GUI gui = new GUI();
 
 
 
@@ -43,12 +43,12 @@ public class Main {
 //        List<Bin> verpakteBoxen = binPacking.besteFit(itemsData);
 //
 //        // Loop door de verpakte dozen en print de inhoud
-        for (Bin box : verpakteBoxen) {
-            System.out.println("Bin ID: " + box.getId() + " bevat items:");
-            for (List<Integer> item : box.getItems()) {
-                item.get(0);
-            }
-        }
+//        for (Bin box : verpakteBoxen) {
+//            System.out.println("Bin ID: " + box.getId() + " bevat items:");
+//            for (List<Integer> item : box.getItems()) {
+//                item.get(0);
+//            }
+//        }
 //
 
 

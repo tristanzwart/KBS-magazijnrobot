@@ -12,6 +12,7 @@ public class OrderInladenPanel extends JPanel {
 
     public OrderInladenPanel(List<Bin> bin) {
         doosTabellen = new ArrayList<>();
+        Database db = new Database();
             // Standaard waarden
         setPreferredSize(new Dimension(1500, 900));
         setLayout(null); // Use null layout for absolute positioning
@@ -38,14 +39,23 @@ public class OrderInladenPanel extends JPanel {
         for(int i = 0; i < bin.size(); i++) {
             JLabel doosLabel = new JLabel("Doos " + i);
             doosLabel.setBounds(1100, 30 + i * 150, 100, 50);
-
             add(doosLabel);
 
-            //Tabel voor de doos maken
+            // Retrieve the orderId from Bin.getItem(0)
+            int orderId = bin.get(i).getItems().get(0).get(0);
 
-            Object[][] data = {};
+            // Call the getOrderLineInfo method from the database with the orderId
+            String[] orderLineInfoArray = db.getOrderLineInfo(orderId);
 
+           // Add the entire orderLineInfoArray as a single array to the orderLineInfo list
+            List<Object[]> orderLineInfo = new ArrayList<>();
+            orderLineInfo.add(orderLineInfoArray);
 
+// Convert List<Object[]> to Object[][]
+            Object[][] data = new Object[orderLineInfo.size()][];
+            for (int j = 0; j < orderLineInfo.size(); j++) {
+                data[j] = orderLineInfo.get(j);
+            }
 
             String[] columnNames = {"Artikelnummer", "Artikelnaam", "Op vooraad"};
 
