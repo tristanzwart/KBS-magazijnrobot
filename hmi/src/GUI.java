@@ -28,8 +28,8 @@ public class GUI extends JFrame{
     private ArduinoCom arduino2;
 
     public GUI() {
-        arduino1 = new ArduinoCom("COM7");
-        arduino2 = new ArduinoCom("COM5");
+        arduino1 = new ArduinoCom("COM4",1);
+        arduino2 = new ArduinoCom("COM5", 2);
         artikelDialog = new ArtikelDialog(this, true);
         db = new Database();
 
@@ -198,6 +198,7 @@ public class GUI extends JFrame{
             RobotPanel robotPanel = new RobotPanel(this);
             mainPanel.setBorder(BorderFactory.createEmptyBorder(210, 250, 0 ,0));
             mainPanel.add(robotPanel);
+            bottomBar.removeAll();
         }
 
         //Revalidate en repaint
@@ -213,9 +214,10 @@ public class GUI extends JFrame{
         } else if (schermNummer == 2) {
             bottomBar.addButton("Verversen");
             bottomBar.addButton("bekijken");
+            bottomBar.addButton("inladen");
         }
-
         bottomBar.revalidate();
+        bottomBar.repaint();
     }
 
     public void giveSideFeedback(String feedback) {

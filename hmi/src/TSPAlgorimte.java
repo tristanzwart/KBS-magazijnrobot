@@ -1,15 +1,8 @@
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TSPAlgorimte {
-    private ArrayList<String> puntenLijst;
-
-    public TSPAlgorimte(String[] punten) {
-        puntenLijst = new ArrayList<>();
-        for (String punt : punten) {
-            puntenLijst.add(punt);
-        }
-    }
 
     public double afstandberkenen(String punt1, String punt2) {
         int xas1, yas1, xas2, yas2;
@@ -32,7 +25,7 @@ public class TSPAlgorimte {
         return Math.sqrt(Math.pow(xas1 - xas2, 2) + Math.pow(yas1 - yas2, 2));
     }
 
-    public ArrayList<String> kortsteroute() {
+    public ArrayList<String> kortsteroute(List<String> puntenLijst) {
         ArrayList<String> bestRoute = null;
         double shortestDistance = Double.MAX_VALUE;
 
@@ -78,5 +71,61 @@ public class TSPAlgorimte {
                 }
             }
         }
+    }
+
+    public List<String[]> BinToTSP(List<Box> verpakteBoxen) {
+        List<String[]> puntenlijsten = new ArrayList<>();
+
+        // Initialize the first array and a counter
+        String[] puntenlijst = new String[3];
+        int index = 0;
+
+        // Iterate through the boxes
+        for (Box box : verpakteBoxen) {
+            for (List<Integer> item : box.getItems()) {
+                // Get the location for the item
+                String locatie = Database.getlocatie(item.get(0));
+
+                // Add the location to the current array
+                puntenlijst[index] = locatie;
+                index++;
+
+                // If the current array is full, add it to the list and start a new array
+                if (index == 3) {
+                    puntenlijsten.add(puntenlijst);
+                    puntenlijst = new String[3];
+                    index = 0;
+                }
+            }
+        }
+
+        // Add the last array if it has any elements
+        if (index > 0) {
+            puntenlijsten.add(puntenlijst);
+        }
+
+        // Return the list of string arrays
+        return puntenlijsten;
+    }
+
+    public List<String[]> calculateAllRoutes(List<Box> verpakteBoxen) {
+        List<String[]> puntenlijsten = BinToTSP(verpakteBoxen);
+        List<String[]> kortstepuntenlijsten = new ArrayList<>();
+
+        for (String[] puntenlijst : puntenlijsten) {
+            List<String> puntenLijst = new ArrayList<>();
+            for (String punt : puntenlijst) {
+                if (punt != null) {
+                    puntenLijst.add(punt);
+                }
+            }
+
+            if (!puntenLijst.isEmpty()) {
+                ArrayList<String> bestRoute = kortsteroute(puntenLijst);
+                kortstepuntenlijsten.add(bestRoute.toArray(new String[0]));
+            }
+        }
+
+        return kortstepuntenlijsten;
     }
 }

@@ -237,10 +237,49 @@ public class Database {
         }
         return stockItemName;
     }
+    public static String getlocatie(int StockItemID) {
+        String stockItemloc = null;
+        try (Connection conn = DriverManager.getConnection(url, user, password)) {
+            String query = "SELECT StockItemLocation FROM stockitemholdings WHERE StockItemID = ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                pstmt.setInt(1, StockItemID);
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    if (rs.next()) {
+                        stockItemloc = rs.getString("StockItemLocation");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching stock item loc");
+        }
+        return stockItemloc;
+    }
 
 
+    public List<List<Integer>> voorBinPacking(int OrderID) {
+        List<List<Integer>> result = new ArrayList<>();
+        try (Connection conn = DriverManager.getConnection(url, user, password);
+             PreparedStatement pstmt = conn.prepareStatement("SELECT o.StockItemID, o.Quantity, s.InternalComments FROM orderlines o JOIN stockitems s ON o.StockItemID = s.StockItemID WHERE o.OrderID = ?")) {
+            pstmt.setInt(1, OrderID); // Set the OrderID parameter in the prepared statement
 
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    List<Integer> row = new ArrayList<>(3);
+                    row.add(rs.getInt("StockItemID"));
+                    row.add(rs.getInt("Quantity"));
+                    row.add(Integer.parseInt(rs.getString("InternalComments"))); // Ensure InternalComments can be converted to an integer
 
+                    result.add(row);
+
+                    // Convert InternalComments to an integer and call UpdateItemData
+
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching order lines: " + e.getMessage());
+        }
+        return result;
+    }
 }
 
 

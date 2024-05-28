@@ -112,7 +112,8 @@ void loop() {
    NOODSTOP();
    
  tiltsensorNOODSTOP();
- //Serial.print(pos);
+   //Print de positie voor de hmi
+   Serial.println(pos);
    communicatieHMI();
    checkRobotStatus();
    if (noodstopstatus == false) {
