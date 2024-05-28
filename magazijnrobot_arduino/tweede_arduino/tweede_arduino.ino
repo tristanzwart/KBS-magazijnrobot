@@ -449,8 +449,9 @@ void productoppakken() {
     //Serial.println("Stopping backward movement, sequence complete...");
     naarAchteren(0);
     handmatigeBesturing = oudehandmatigebesturing;
-    oppakken = false;
     Serial.println("bewegen");
+    oppakken = false;
+
   }
 }
 

@@ -1,12 +1,14 @@
 import com.fazecast.jSerialComm.*;
 
+import java.util.List;
+
 public class ArduinoCom {
     private SerialPort comPort;
     private int arduinoNummer;
     private StringBuilder dataBuilder = new StringBuilder();
 
     public ArduinoCom(String comPoort, int arduinoNummer) {
-        comPort = SerialPort.getCommPort(comPoort); // Gebruikt de Linux seriële poort. Voor windows gebruik COM poort
+        comPort = SerialPort.getCommPort(comPoort); // Gebruik de Linux seriële poort. Voor windows gebruik COM poort
         comPort.setBaudRate(9600);
         if (!comPort.openPort()) {
             System.out.println("Kan poort niet openen!");
@@ -37,6 +39,10 @@ public class ArduinoCom {
                     String dataLine = dataBuilder.toString().split("\n")[0];
                     dataBuilder.delete(0, dataLine.length() + 1);
 
+                    if (dataLine.equals("bewegen")){
+                        OrderInladenDialog.onBewegenReceived();
+                    }
+
                     //Print de ontvangen data voor debug doeleinden
                     System.out.println("Ontvangen van Arduino" + arduinoNummer + ": " + dataLine);
 
@@ -47,8 +53,6 @@ public class ArduinoCom {
 
 
     public void verstuurData(String data){
-
-
         try {
             // Verzend een commando naar de Arduino
             String command = data + "\n"; // Vraag de temperatuur op
@@ -63,7 +67,6 @@ public class ArduinoCom {
 //            int numRead = comPort.readBytes(readBuffer, readBuffer.length);
 //            System.out.println("Ontvangen van Arduino: " + new String(readBuffer, 0, numRead));
 
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -74,9 +77,7 @@ public class ArduinoCom {
     }
 
     public static String getCoordinates(char choice) {
-
         switch (choice) {
-
             case 'A':
                 return String.valueOf(-1701);
             case 'B':
