@@ -37,21 +37,26 @@ public class OrderInladenPanel extends JPanel {
         //Visualisatie van de dozen
         //Voor elke doos deze for loop uitvoeren
         for(int i = 0; i < bin.size(); i++) {
-            JLabel doosLabel = new JLabel("Doos " + i);
+            JLabel doosLabel = new JLabel("Doos " + i+1);
             doosLabel.setBounds(1100, 30 + i * 150, 100, 50);
             add(doosLabel);
 
-            // Retrieve the orderId from Bin.getItem(0)
-            int orderId = bin.get(i).getItems().get(0).get(0);
-
-            // Call the getOrderLineInfo method from the database with the orderId
-            String[] orderLineInfoArray = db.getOrderLineInfo(orderId);
-
-           // Add the entire orderLineInfoArray as a single array to the orderLineInfo list
+            // Initialize the orderLineInfo list outside the loop
             List<Object[]> orderLineInfo = new ArrayList<>();
-            orderLineInfo.add(orderLineInfoArray);
 
-// Convert List<Object[]> to Object[][]
+            // Iterate over all items in the bin
+            for (List<Integer> item : bin.get(i).getItems()) {
+                // Retrieve the orderId from the item
+                int orderId = item.get(0);
+
+                // Call the getOrderLineInfo method from the database with the orderId
+                String[] orderLineInfoArray = db.getOrderLineInfo(orderId);
+
+                // Add the entire orderLineInfoArray as a single array to the orderLineInfo list
+                orderLineInfo.add(orderLineInfoArray);
+            }
+
+            // Convert List<Object[]> to Object[][]
             Object[][] data = new Object[orderLineInfo.size()][];
             for (int j = 0; j < orderLineInfo.size(); j++) {
                 data[j] = orderLineInfo.get(j);
@@ -66,13 +71,6 @@ public class OrderInladenPanel extends JPanel {
             scrollPane.setBounds(885, 80 + i * 150, 500, 100);
             add(scrollPane);
             doosTabellen.add(doosTabel);
-
-
-            //Updaten van de tabel data voorlopig niet nodig
-            //DefaultTableModel model = (DefaultTableModel) doosTabel.getModel();
-            //model.setDataVector(data, columnNames);
-            //giveSideFeedback("");
-
         }
 
 
