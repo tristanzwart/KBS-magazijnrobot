@@ -117,7 +117,7 @@ public class BottomBarPanel extends JPanel implements ActionListener {
         }
         else if(e.getSource() == inladen){
 
-            OrderInladenDialog orderin = new OrderInladenDialog(gui,true, HuidigeGeselecteerdeOrder);
+            OrderInladenDialog orderin = new OrderInladenDialog(gui,true, HuidigeGeselecteerdeOrder, gui);
 
         }
     }
