@@ -1,10 +1,16 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class OrderInladenPanel extends JPanel {
     private JPanel magazijn;
 
+    //Tabel voor de dozen
+    private ArrayList<JTable> doosTabellen;
+
     public OrderInladenPanel(int OrderID) {
+        doosTabellen = new ArrayList<>();
             // Standaard waarden
         setPreferredSize(new Dimension(1500, 900));
         setLayout(null); // Use null layout for absolute positioning
@@ -25,6 +31,40 @@ public class OrderInladenPanel extends JPanel {
             }
         }
         add(magazijn); // Add the grid panel to the main panel
+
+        //Visualisatie van de dozen
+        //Voor elke doos deze for loop uitvoeren
+        for(int i = 0; i < 5; i++) {
+            JLabel doosLabel = new JLabel("Doos " + i);
+            doosLabel.setBounds(1100, 30 + i * 150, 100, 50);
+
+            add(doosLabel);
+
+            //Tabel voor de doos maken
+
+            Object[][] data = {{1, "test", 12},
+                    {2, "test2", 13},
+                    {3, "test3", 14},
+                    {4, "test4", 15},
+                    {5, "test5", 16}};
+
+            String[] columnNames = {"Artikelnummer", "Artikelnaam", "Op vooraad"};
+
+            JTable doosTabel = new JTable(new DefaultTableModel(data, columnNames));
+            doosTabel.setDefaultEditor(Object.class, null);
+            doosTabel.getTableHeader().setReorderingAllowed(false);
+            JScrollPane scrollPane = new JScrollPane(doosTabel);
+            scrollPane.setBounds(885, 80 + i * 150, 500, 100);
+            add(scrollPane);
+            doosTabellen.add(doosTabel);
+
+
+            //Updaten van de tabel data voorlopig niet nodig
+            //DefaultTableModel model = (DefaultTableModel) doosTabel.getModel();
+            //model.setDataVector(data, columnNames);
+            //giveSideFeedback("");
+
+        }
 
 
 

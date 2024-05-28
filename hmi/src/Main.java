@@ -40,11 +40,11 @@ public class Main {
 //        BinPacking binPacking = new BinPacking(50);
 //
 //        // Voer het beste fit algoritme uit om de items in dozen te plaatsen
-//        List<Box> verpakteBoxen = binPacking.besteFit(itemsData);
+//        List<Bin> verpakteBoxen = binPacking.besteFit(itemsData);
 //
 //        // Loop door de verpakte dozen en print de inhoud
-//        for (Box box : verpakteBoxen) {
-//            System.out.println("Box ID: " + box.getId() + " bevat items:");
+//        for (Bin box : verpakteBoxen) {
+//            System.out.println("Bin ID: " + box.getId() + " bevat items:");
 //            for (List<Integer> item : box.getItems()) {
 //                System.out.println("Item ID: " + item.get(0) + ", Aantal Items: " + item.get(1) + ", Afmeting: " + item.get(2));
 //            }
