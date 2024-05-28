@@ -37,7 +37,7 @@ public class OrderInladenPanel extends JPanel {
         //Visualisatie van de dozen
         //Voor elke doos deze for loop uitvoeren
         for(int i = 0; i < bin.size(); i++) {
-            JLabel doosLabel = new JLabel("Doos " + i+1);
+            JLabel doosLabel = new JLabel("Doos " + (i+1));
             doosLabel.setBounds(1100, 30 + i * 150, 100, 50);
             add(doosLabel);
 
