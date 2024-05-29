@@ -25,6 +25,7 @@ bool noodstopstatus= false;
 bool handmatigeBesturing = false;
 bool blockBesturingLinks = false;
 bool blockBesturingRechts = false;
+bool ready =false;
 
 void setup() {
   pinMode(handmatigecom, INPUT);
@@ -52,7 +53,7 @@ void setup() {
 
 void loop() {
   //Print de positie voor de hmi
-  Serial.println(pos);
+  //Serial.println(pos);
   communicatieHMI();
   if(!digitalRead(comnoodstop)){
   stop();
@@ -68,6 +69,10 @@ void loop() {
     handmatigeBesturing= false;
     
   naarbestemming(bestemming);
+  if (bestemming - pos <= 10 && bestemming - pos >= -10 && !ready ){
+        Serial.println( "ready");
+        ready = true;
+      }
   }
   }
   
@@ -168,9 +173,7 @@ void naarbestemming(int target){
   if(pwr < 120 && pwr >0){
     pwr= 120;
   }
-  if(pwr== 0 ){
-    Serial.print("ready");
-  }
+ 
 
   // motor direction
   int dir = 1;
@@ -252,6 +255,7 @@ void checkEindebaan(){
 
 void communicatieHMI() {
   if (Serial.available() > 0) {
+    
     String data = Serial.readStringUntil('\n'); // Lees de binnenkomende data tot newline
   // if (data == "stop") {
   //     if(noodstopstatus == false) {
@@ -262,6 +266,7 @@ void communicatieHMI() {
   //     }
   //   }
     bestemming = data.toInt();
+    ready= false;
   }
 }
 
