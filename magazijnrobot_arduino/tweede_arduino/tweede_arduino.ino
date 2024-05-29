@@ -269,6 +269,9 @@ void naarbestemming(int target){
   if(pwr < 200 && pwr >0){
     pwr= 200;
   }
+  if(pwr== 0 ){
+    Serial.print("ready");
+  }
  
 
     
