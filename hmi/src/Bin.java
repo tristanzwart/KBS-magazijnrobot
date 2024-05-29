@@ -1,14 +1,14 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class Box {
+public class Bin {
     private int id; // Doos nummer
     private int capaciteit; // Maximale capaciteit van doos
     private int huidigeBelasting; // Gebruikte ruimte van de doos
     private List<List<Integer>> items; // Lijst van items in de doos, elk item is een lijst met [ItemID, AantalItems, Afmeting]
 
     // Constructor om een nieuwe doos te maken
-    public Box(int id, int capaciteit) {
+    public Bin(int id, int capaciteit) {
         this.id = id;
         this.capaciteit = capaciteit;
         this.huidigeBelasting = 0;

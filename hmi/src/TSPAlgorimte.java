@@ -1,4 +1,3 @@
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,7 +72,7 @@ public class TSPAlgorimte {
         }
     }
 
-    public List<String[]> BinToTSP(List<Box> verpakteBoxen) {
+    public List<String[]> BinToTSP(List<Bin> verpakteBoxen) {
         List<String[]> puntenlijsten = new ArrayList<>();
 
         // Initialize the first array and a counter
@@ -81,8 +80,8 @@ public class TSPAlgorimte {
         int index = 0;
 
         // Iterate through the boxes
-        for (Box box : verpakteBoxen) {
-            for (List<Integer> item : box.getItems()) {
+        for (Bin bin : verpakteBoxen) {
+            for (List<Integer> item : bin.getItems()) {
                 // Get the location for the item
                 String locatie = Database.getlocatie(item.get(0));
 
@@ -108,7 +107,7 @@ public class TSPAlgorimte {
         return puntenlijsten;
     }
 
-    public List<String[]> calculateAllRoutes(List<Box> verpakteBoxen) {
+    public List<String[]> calculateAllRoutes(List<Bin> verpakteBoxen) {
         List<String[]> puntenlijsten = BinToTSP(verpakteBoxen);
         List<String[]> kortstepuntenlijsten = new ArrayList<>();
 
