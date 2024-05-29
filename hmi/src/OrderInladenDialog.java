@@ -39,43 +39,47 @@ public class OrderInladenDialog extends JDialog {
     }
 
     public void RouteNaarRobot(ArduinoCom arduino1, ArduinoCom arduino2) {
-        for (String[] route : routes) {
-            if (route.length >= 1) {  // Ensure each route has at least 1 strings
-                for (int i = 0; i < route.length; i++) {
-                    System.out.println(route[i]);
+        final ArduinoCom finalArduino1 = arduino1;
+        final ArduinoCom finalArduino2 = arduino2;
+    SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+        @Override
+        protected Void doInBackground() throws Exception {
+            for (String[] route : routes) {
+                if (route.length >= 1) {  // Ensure each route has at least 1 strings
+                    for (int i = 0; i < route.length; i++) {
+                        System.out.println(route[i]);
 
-                    arduino1.verstuurData(ArduinoCom.getCoordinates(route[i].charAt(1)));
-                    arduino2.verstuurData(ArduinoCom.getCoordinates(route[i].charAt(0)));
-                    System.out.println("Sending " + ArduinoCom.getCoordinates(route[i].charAt(1)) + " to arduino1");
-                    System.out.println("Sending " + ArduinoCom.getCoordinates(route[i].charAt(0)) + " to arduino2");
-                    latch = new CountDownLatch(1);
+                        finalArduino1.verstuurData(ArduinoCom.getCoordinates(route[i].charAt(1)));
+                        finalArduino2.verstuurData(ArduinoCom.getCoordinates(route[i].charAt(0)));
+                        System.out.println("Sending " + ArduinoCom.getCoordinates(route[i].charAt(1)) + " to arduino1");
+                        System.out.println("Sending " + ArduinoCom.getCoordinates(route[i].charAt(0)) + " to arduino2");
+                        latch = new CountDownLatch(1);
 
-                    //arduino2.verstuurData("oppakken");
-                    //System.out.println("Sending 'oppakken' to arduino2");
-
-                    //latch = new CountDownLatch(1);
-
-                    try {
-                        latch.await();  // Wait for the "ready" signal
-                        arduino1.verstuurData("oppakken");
-                        System.out.println("Sending 'oppakken' to arduino2");
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        System.out.println("Thread interrupted");
+                        try {
+                            latch.await();  // Wait for the "ready" signal
+                            arduino1.verstuurData("oppakken");
+                            System.out.println("Sending 'oppakken' to arduino2");
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            System.out.println("Thread interrupted");
+                        }
+                        latch = new CountDownLatch(1);
+                        try {
+                            latch.await();  // Wait for the "bewegen" signal
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            System.out.println("Thread interrupted");
+                        }
                     }
-                    latch = new CountDownLatch(1);
-                    try {
-                        latch.await();  // Wait for the "bewegen" signal
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        System.out.println("Thread interrupted");
-                    }
+                } else {
+                    System.out.println("Invalid route length: " + route.length);
                 }
-            } else {
-                System.out.println("Invalid route length: " + route.length);
             }
+            return null;
         }
-    }
+    };
+    worker.execute();
+}
 
 
     public static void onBewegenReceived(int arduino) {
