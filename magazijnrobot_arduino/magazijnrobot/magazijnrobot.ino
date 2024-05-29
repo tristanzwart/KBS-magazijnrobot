@@ -168,6 +168,9 @@ void naarbestemming(int target){
   if(pwr < 120 && pwr >0){
     pwr= 120;
   }
+  if(pwr== 0 ){
+    Serial.print("ready");
+  }
 
   // motor direction
   int dir = 1;
