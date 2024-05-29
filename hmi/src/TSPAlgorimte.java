@@ -36,7 +36,7 @@ public class TSPAlgorimte {
             if (distance < shortestDistance) {
                 shortestDistance = distance;
                 bestRoute = new ArrayList<>(permutation);
-                bestRoute.add("00");
+                bestRoute.add("60");
             }
         }
         for (String location : bestRoute) {

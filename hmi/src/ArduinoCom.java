@@ -110,7 +110,9 @@ public class ArduinoCom {
             case '5':
                 return String.valueOf(2238);
             case '0':
-                return String.valueOf(0);
+                return String.valueOf(80);
+            case '6':
+                return String.valueOf(-80);
             default:
                 return "Invalid choice";
         }
