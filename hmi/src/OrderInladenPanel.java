@@ -9,9 +9,9 @@ public class OrderInladenPanel extends JPanel {
     private JPanel magazijn;
     private JPanel start;
     private List<String[]> LijnLocaties;
-    private String[] locaties = {"Start", "A1", "B2", "E4", "C5", "Eind"};
-    private String status = "Bewegen";
-    private String lastLocation = "C5";
+    private String[] locaties;
+    private String status;
+    private String lastLocation = "Start";
 
     //Tabel voor de dozen
     private ArrayList<JTable> doosTabellen;
@@ -207,12 +207,12 @@ public class OrderInladenPanel extends JPanel {
 
     }
 
-    private void setLocations(String[] locaties) {
+    public void setLocations(String[] locaties) {
         this.locaties = locaties;
         repaint();
     }
 
-    private void setStatus(String status) {
+    public void setStatus(String status) {
         this.status = status;
         repaint();
     }

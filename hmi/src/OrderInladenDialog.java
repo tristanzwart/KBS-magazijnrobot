@@ -45,6 +45,7 @@ public class OrderInladenDialog extends JDialog {
         @Override
         protected Void doInBackground() throws Exception {
             for (String[] route : routes) {
+                panel.setLocations(route);
                 if (route.length >= 1) {  // Ensure each route has at least 1 strings
                     for (int i = 0; i < route.length; i++) {
                         System.out.println(route[i]);
@@ -53,10 +54,13 @@ public class OrderInladenDialog extends JDialog {
                         finalArduino2.verstuurData(ArduinoCom.getCoordinates(route[i].charAt(0)));
                         System.out.println("Sending " + ArduinoCom.getCoordinates(route[i].charAt(1)) + " to arduino1");
                         System.out.println("Sending " + ArduinoCom.getCoordinates(route[i].charAt(0)) + " to arduino2");
+                        panel.setStatus("Bewegen");
                         latch = new CountDownLatch(1);
 
                         try {
                             latch.await();  // Wait for the "ready" signal
+                            panel.setLastLocation(route[i]);
+                            panel.setStatus("Pakken");
                             arduino1.verstuurData("oppakken");
                             System.out.println("Sending 'oppakken' to arduino2");
                         } catch (InterruptedException e) {
