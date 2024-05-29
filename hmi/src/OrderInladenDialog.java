@@ -12,6 +12,8 @@ public class OrderInladenDialog extends JDialog {
     TSPAlgorimte tsp;
     List<String[]> routes;
     private static CountDownLatch latch;
+    static boolean readyReceived1;
+    static boolean readyReceived2;
 
     public OrderInladenDialog(JFrame frame, boolean modal, int OrderID, GUI gui){
         super(frame, modal);
@@ -41,6 +43,10 @@ public class OrderInladenDialog extends JDialog {
                     arduino2.verstuurData(ArduinoCom.getCoordinates(route[i].charAt(0)));
                     latch = new CountDownLatch(1);
 
+                    arduino2.verstuurData("ready");
+
+                    latch = new CountDownLatch(1);
+
                     try {
                         latch.await();  // Wait for the "bewegen" signal
                     } catch (InterruptedException e) {
@@ -54,10 +60,16 @@ public class OrderInladenDialog extends JDialog {
         }
     }
 
-    public static void onBewegenReceived() {
-        if (latch != null) {
-            latch.countDown();  // Signal that "bewegen" was received
+    public static void onBewegenReceived(int arduino) {
+        if (arduino == 1){
+            readyReceived1 = true;
+        } else if (arduino == 2) {
+            readyReceived2 = true;
+        }
+        if (readyReceived1 == true && readyReceived2 == true || arduino == 0){
+            if (latch != null) {
+                latch.countDown();  // Signal that "bewegen" was received
+            }
         }
     }
-
 }

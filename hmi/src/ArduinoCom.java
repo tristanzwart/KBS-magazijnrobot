@@ -40,8 +40,15 @@ public class ArduinoCom {
                     dataBuilder.delete(0, dataLine.length() + 1);
 
                     if (dataLine.equals("bewegen")){
-                        OrderInladenDialog.onBewegenReceived();
+                        OrderInladenDialog.onBewegenReceived(0);
                     }
+                    if (dataLine.equals("ready") && arduinoNummer == 1){
+                        OrderInladenDialog.onBewegenReceived(1);
+                    }
+                    if (dataLine.equals("ready") && arduinoNummer == 2){
+                        OrderInladenDialog.onBewegenReceived(2);
+                    }
+
 
                     //Print de ontvangen data voor debug doeleinden
                     //System.out.println("Ontvangen van Arduino" + arduinoNummer + ": " + dataLine);
