@@ -19,6 +19,8 @@ public class OrderInladenDialog extends JDialog {
         tsp = new TSPAlgorimte();
         routes = new ArrayList<>();
         routes = tsp.calculateAllRoutes(bp.besteFit());
+        pakbonmaken(bp.besteFit(), OrderID);
+
 
         panel = new OrderInladenPanel(bp.besteFit());
         add(panel);
@@ -28,8 +30,37 @@ public class OrderInladenDialog extends JDialog {
 
 
     }
-    void routesdoorlopen(List<String[]> routes){
+    void pakbonmaken(List<Bin> bestfit,int Orderid) {
+        Database db = new Database();
+        String verzender = "Nerdy Gadgets";
+        String ontvanger = db.getcustomername(Orderid);
+
+        for (int i = 0; i < bestfit.size(); i++) {
+            List<String[]> items = new ArrayList<>();
 
 
+            for (List<Integer> item : bestfit.get(i).getItems()) {
+                // Retrieve the orderId from the item
+                int orderId = item.get(0);
+
+                // Call the getOrderLineInfo method from the database with the orderId
+                String[] orderLineInfoArray = db.getOrderLineInfo(orderId);
+                items.add(orderLineInfoArray);
+
+                PakbonGenerator pakbon = new PakbonGenerator(verzender, ontvanger, items);
+                pakbon.genereerPakbon( "pakbon"+ (i+1)+".txt");
+
+
+            }
+            PakbonGenerator pakbon = new PakbonGenerator(verzender, ontvanger, items);
+            pakbon.genereerPakbon( "Order "+Orderid + " Doos "+ (i+1)+".txt");
+
+
+
+            // Convert List<Object[]> to Object[][]
+
+
+
+        }
     }
 }

@@ -284,7 +284,8 @@ public class Database {
         return result;
     }
 
-    public String[] getOrderLineInfo( int orderid) {
+
+    public String[] getOrderLineInfo(int orderid) {
         String[] info = new String[3];
 
         try (Connection conn = DriverManager.getConnection(url, user, password)) {
@@ -313,5 +314,26 @@ public class Database {
 
         return info;
     }
+
+    public String getcustomername(int Orderid) {
+        String customerName = null;
+        String statement = "SELECT CustomerName FROM customers WHERE CustomerID IN (SELECT CustomerID FROM orders WHERE OrderID = ?);";
+        try (Connection conn = DriverManager.getConnection(url, user, password);
+             PreparedStatement mystmt = conn.prepareStatement(statement)) {
+
+            mystmt.setInt(1, Orderid);
+            try (ResultSet myres = mystmt.executeQuery()) {
+                if (myres.next()) {
+                    customerName = myres.getString("CustomerName");
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Failed to retrieve customer name");
+            e.printStackTrace(); // For more detailed error information
+        }
+        return customerName;
+    }
+
 }
+
 

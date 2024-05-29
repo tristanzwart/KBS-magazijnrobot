@@ -36,8 +36,14 @@ public class TSPAlgorimte {
             if (distance < shortestDistance) {
                 shortestDistance = distance;
                 bestRoute = new ArrayList<>(permutation);
+                bestRoute.add("00");
             }
         }
+        for (String location : bestRoute) {
+            System.out.println(location);
+        }
+        System.out.println("volgende");
+
 
         return bestRoute;
     }
