@@ -13,6 +13,7 @@ public class Database {
     public Database() {
 
     }
+
     /*
     public void allStockItems () {
         try (Connection conn = DriverManager.getConnection(url, user, password); // Maak verbinding met de database
@@ -68,6 +69,7 @@ public class Database {
             return null;
         }
     }
+
     public Object[][] getOrderlines(int OrderID) {
         List<Object[]> rows = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(url, user, password);
@@ -78,7 +80,7 @@ public class Database {
                 while (rs.next()) {
                     Object[] row = new Object[4]; // Number of columns is 4
                     for (int i = 1; i <= 4; i++) {
-                        row[i-1] = rs.getObject(i);
+                        row[i - 1] = rs.getObject(i);
                     }
                     rows.add(row);
                 }
@@ -237,6 +239,7 @@ public class Database {
         }
         return stockItemName;
     }
+
     public static String getlocatie(int StockItemID) {
         String stockItemloc = null;
         try (Connection conn = DriverManager.getConnection(url, user, password)) {
@@ -280,6 +283,57 @@ public class Database {
         }
         return result;
     }
+
+
+    public String[] getOrderLineInfo(int orderid) {
+        String[] info = new String[3];
+
+        try (Connection conn = DriverManager.getConnection(url, user, password)) {
+            String statement = "SELECT StockItemID, Description, Quantity FROM orderlines WHERE OrderID = ?;";
+            PreparedStatement mystmt = conn.prepareStatement(statement);
+            mystmt.setInt(1, orderid);
+            ResultSet myres = mystmt.executeQuery();
+
+            if (myres.next()) {
+                String stockItemID = myres.getString("StockItemID");
+                String description = myres.getString("Description");
+                String quantity = myres.getString("Quantity");
+
+                info[0] = stockItemID;
+                info[1] = description;
+                info[2] = quantity;
+            } else {
+                System.out.println("No order lines found for OrderID: " + orderid);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Failed to retrieve order line info");
+            e.printStackTrace(); // For more detailed error information
+            return null;
+        }
+
+        return info;
+    }
+
+    public String getcustomername(int Orderid) {
+        String customerName = null;
+        String statement = "SELECT CustomerName FROM customers WHERE CustomerID IN (SELECT CustomerID FROM orders WHERE OrderID = ?);";
+        try (Connection conn = DriverManager.getConnection(url, user, password);
+             PreparedStatement mystmt = conn.prepareStatement(statement)) {
+
+            mystmt.setInt(1, Orderid);
+            try (ResultSet myres = mystmt.executeQuery()) {
+                if (myres.next()) {
+                    customerName = myres.getString("CustomerName");
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Failed to retrieve customer name");
+            e.printStackTrace(); // For more detailed error information
+        }
+        return customerName;
+    }
+
 }
 
 

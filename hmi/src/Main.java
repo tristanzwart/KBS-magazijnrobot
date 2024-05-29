@@ -6,7 +6,10 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        GUI gui = new GUI();
+       GUI gui = new GUI();
+
+
+
 
 //                // testcode pakbon genereren
 //                String verzender = "Nerdy Gadgets";
@@ -44,7 +47,7 @@ public class Main {
 //        for (Bin box : verpakteBoxen) {
 //            System.out.println("Bin ID: " + box.getId() + " bevat items:");
 //            for (List<Integer> item : box.getItems()) {
-//                System.out.println("Item ID: " + item.get(0) + ", Aantal Items: " + item.get(1) + ", Afmeting: " + item.get(2));
+//                item.get(0);
 //            }
 //        }
 //

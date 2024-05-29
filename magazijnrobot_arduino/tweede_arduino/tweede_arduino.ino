@@ -142,7 +142,7 @@ void loop() {
       if (bestemming - pos <= 10 && bestemming - pos >= -10 && !ready ){
         Serial.println( "1 ready");
         ready = true;
-        
+
       }
     }
     }
@@ -275,8 +275,8 @@ void naarbestemming(int target){
   if(pwr < 200 && pwr >0){
     pwr= 200;
   }
-  
- 
+
+
 
     
 
@@ -369,7 +369,7 @@ void communicatieHMI() {
       begintime = millis();
     }
     else{
-      
+
       bestemming = data.toInt();
       ready =false;
     }
