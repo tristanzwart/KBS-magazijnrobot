@@ -8,6 +8,7 @@ public class ArduinoCom {
     private StringBuilder dataBuilder = new StringBuilder();
 
     public ArduinoCom(String comPoort, int arduinoNummer) {
+        this.arduinoNummer = arduinoNummer;
         comPort = SerialPort.getCommPort(comPoort); // Gebruik de Linux seriële poort. Voor windows gebruik COM poort
         comPort.setBaudRate(9600);
         if (!comPort.openPort()) {
@@ -38,20 +39,23 @@ public class ArduinoCom {
                 if (dataBuilder.toString().contains("\n")) {
                     String dataLine = dataBuilder.toString().split("\n")[0];
                     dataBuilder.delete(0, dataLine.length() + 1);
+                    dataLine = dataLine.trim();
 
                     if (dataLine.equals("bewegen")){
                         OrderInladenDialog.onBewegenReceived(0);
                     }
-                    if (dataLine.equals("ready") && arduinoNummer == 1){
+                    if (dataLine.equals("1 ready")){
+                        System.out.println("Received ready from arduino 1");
                         OrderInladenDialog.onBewegenReceived(1);
                     }
-                    if (dataLine.equals("ready") && arduinoNummer == 2){
+                    if (dataLine.equals("2 ready")){
+                        System.out.println("Received ready from arduino 2");
                         OrderInladenDialog.onBewegenReceived(2);
                     }
 
 
                     //Print de ontvangen data voor debug doeleinden
-                    //System.out.println("Ontvangen van Arduino" + arduinoNummer + ": " + dataLine);
+                    System.out.println("Ontvangen van Arduino" + arduinoNummer + ": " + dataLine);
 
                 }
             }

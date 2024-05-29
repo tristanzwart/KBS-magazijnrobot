@@ -35,7 +35,7 @@ public class OrderInladenDialog extends JDialog {
 
     public void RouteNaarRobot(ArduinoCom arduino1, ArduinoCom arduino2) {
         for (String[] route : routes) {
-            if (route.length >= 3) {  // Ensure each route has exactly 3 strings
+            if (route.length >= 1) {  // Ensure each route has at least 1 strings
                 for (int i = 0; i < route.length; i++) {
                     System.out.println(route[i]);
 
@@ -48,8 +48,17 @@ public class OrderInladenDialog extends JDialog {
                     //arduino2.verstuurData("oppakken");
                     //System.out.println("Sending 'oppakken' to arduino2");
 
-                    latch = new CountDownLatch(1);
+                    //latch = new CountDownLatch(1);
 
+                    try {
+                        latch.await();  // Wait for the "ready" signal
+                        arduino1.verstuurData("oppakken");
+                        System.out.println("Sending 'oppakken' to arduino2");
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        System.out.println("Thread interrupted");
+                    }
+                    latch = new CountDownLatch(1);
                     try {
                         latch.await();  // Wait for the "bewegen" signal
                     } catch (InterruptedException e) {
@@ -75,6 +84,11 @@ public class OrderInladenDialog extends JDialog {
                 latch.countDown();  // Signal that "bewegen" was received
                 System.out.println("Latch triggerd!");
             }
+        }
+        if(readyReceived1 == true && readyReceived2 == true){
+            readyReceived1 = false;
+            readyReceived2 = false;
+            System.out.println("Ready status reset");
         }
     }
 }

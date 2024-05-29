@@ -140,8 +140,9 @@ void loop() {
     else{
       naarbestemming(bestemming);
       if (bestemming - pos <= 10 && bestemming - pos >= -10 && !ready ){
-        Serial.println( "ready");
+        Serial.println( "1 ready");
         ready = true;
+        
       }
     }
     }
