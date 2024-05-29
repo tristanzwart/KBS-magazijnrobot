@@ -52,6 +52,7 @@ bool joylaasteknopstatus = true;
 unsigned long begintime ;
 int interval1 = 1200;
 int interval2 = 300;
+bool ready = false;
 
 
 
@@ -113,7 +114,7 @@ void loop() {
    
  tiltsensorNOODSTOP();
    //Print de positie voor de hmi
-   Serial.println(pos);
+   //Serial.println(pos);
    communicatieHMI();
    checkRobotStatus();
    if (noodstopstatus == false) {
@@ -138,6 +139,10 @@ void loop() {
 }
     else{
       naarbestemming(bestemming);
+      if (bestemming - pos <= 10 && bestemming - pos >= 10 && !ready ){
+        Serial.println( "ready");
+        ready = true;
+      }
     }
     }
     
@@ -269,9 +274,7 @@ void naarbestemming(int target){
   if(pwr < 200 && pwr >0){
     pwr= 200;
   }
-  if(pwr== 0 ){
-    Serial.print("ready");
-  }
+  
  
 
     
@@ -365,7 +368,9 @@ void communicatieHMI() {
       begintime = millis();
     }
     else{
-    bestemming = data.toInt();
+      
+      bestemming = data.toInt();
+      ready =false;
     }
   }
 }

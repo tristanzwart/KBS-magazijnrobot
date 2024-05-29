@@ -12,8 +12,8 @@ public class OrderInladenDialog extends JDialog {
     TSPAlgorimte tsp;
     List<String[]> routes;
     private static CountDownLatch latch;
-    static boolean readyReceived1;
-    static boolean readyReceived2;
+    static boolean readyReceived1 = false;
+    static boolean readyReceived2 = false;
 
     public OrderInladenDialog(JFrame frame, boolean modal, int OrderID, GUI gui){
         super(frame, modal);
@@ -41,9 +41,12 @@ public class OrderInladenDialog extends JDialog {
 
                     arduino1.verstuurData(ArduinoCom.getCoordinates(route[i].charAt(1)));
                     arduino2.verstuurData(ArduinoCom.getCoordinates(route[i].charAt(0)));
+                    System.out.println("Sending " + ArduinoCom.getCoordinates(route[i].charAt(1)) + " to arduino1");
+                    System.out.println("Sending " + ArduinoCom.getCoordinates(route[i].charAt(0)) + " to arduino2");
                     latch = new CountDownLatch(1);
 
-                    arduino2.verstuurData("ready");
+                    //arduino2.verstuurData("oppakken");
+                    //System.out.println("Sending 'oppakken' to arduino2");
 
                     latch = new CountDownLatch(1);
 
@@ -66,9 +69,11 @@ public class OrderInladenDialog extends JDialog {
         } else if (arduino == 2) {
             readyReceived2 = true;
         }
+        System.out.println("Ready status: " + readyReceived1 + " " + readyReceived2);
         if (readyReceived1 == true && readyReceived2 == true || arduino == 0){
             if (latch != null) {
                 latch.countDown();  // Signal that "bewegen" was received
+                System.out.println("Latch triggerd!");
             }
         }
     }
