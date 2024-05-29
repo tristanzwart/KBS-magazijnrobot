@@ -33,11 +33,12 @@ public class OrderInladenDialog extends JDialog {
 
     public void RouteNaarRobot(ArduinoCom arduino1, ArduinoCom arduino2) {
         for (String[] route : routes) {
-            if (route.length == 3) {  // Ensure each route has exactly 3 strings
+            if (route.length >= 3) {  // Ensure each route has exactly 3 strings
                 for (int i = 0; i < route.length; i++) {
+                    System.out.println(route[i]);
 
-                    arduino1.verstuurData(ArduinoCom.getCoordinates(route[i].charAt(i)));
-                    arduino2.verstuurData(ArduinoCom.getCoordinates(route[i].charAt(i)));
+                    arduino1.verstuurData(ArduinoCom.getCoordinates(route[i].charAt(1)));
+                    arduino2.verstuurData(ArduinoCom.getCoordinates(route[i].charAt(0)));
                     latch = new CountDownLatch(1);
 
                     try {

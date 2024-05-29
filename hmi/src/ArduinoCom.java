@@ -44,7 +44,7 @@ public class ArduinoCom {
                     }
 
                     //Print de ontvangen data voor debug doeleinden
-                    System.out.println("Ontvangen van Arduino" + arduinoNummer + ": " + dataLine);
+                    //System.out.println("Ontvangen van Arduino" + arduinoNummer + ": " + dataLine);
 
                 }
             }

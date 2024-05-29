@@ -28,8 +28,8 @@ public class GUI extends JFrame{
     private ArduinoCom arduino2;
 
     public GUI() {
-        arduino1 = new ArduinoCom("COM4",1);
-        arduino2 = new ArduinoCom("COM5", 2);
+        arduino1 = new ArduinoCom("COM5",1);
+        arduino2 = new ArduinoCom("COM4", 2);
         artikelDialog = new ArtikelDialog(this, true);
         db = new Database();
 
