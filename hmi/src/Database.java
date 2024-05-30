@@ -334,6 +334,19 @@ public class Database {
         return customerName;
     }
 
+
+    public static void VoorraadVerlagen(int OrderID) {
+        try (Connection conn = DriverManager.getConnection(url, user, password)) {
+            // Query voor het bijwerken van de 'QuantityOnHand' van een specifiek 'StockItemID'
+            String query = "UPDATE stockitemholdings SET QuantityOnHand = QuantityOnHand - 1 WHERE StockItemID IN (SELECT StockItemID FROM orderlines WHERE OrderID = ?)";
+            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                pstmt.setInt(1, OrderID);
+                pstmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            System.out.println("Updaten van Orderline is mislukt!");
+        }
+    }
 }
 
 
