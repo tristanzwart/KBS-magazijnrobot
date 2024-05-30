@@ -30,7 +30,7 @@ public class OrderInladenDialog extends JDialog {
         pakbonmaken(bp.besteFit(), OrderID);
 
 
-        panel = new OrderInladenPanel(bp.besteFit());
+        panel = new OrderInladenPanel(bp.besteFit(), OrderID);
         add(panel);
 
         RouteNaarRobot(gui.getArduino1(), gui.getArduino2());
@@ -118,10 +118,10 @@ public class OrderInladenDialog extends JDialog {
 
             for (List<Integer> item : bestfit.get(i).getItems()) {
                 // Retrieve the orderId from the item
-                int orderId = item.get(0);
+                int stockid = item.get(0);
 
                 // Call the getOrderLineInfo method from the database with the orderId
-                String[] orderLineInfoArray = db.getOrderLineInfo(orderId);
+                String[] orderLineInfoArray = db.getOrderLineInfo(Orderid, stockid);
                 items.add(orderLineInfoArray);
 
                 PakbonGenerator pakbon = new PakbonGenerator(verzender, ontvanger, items);

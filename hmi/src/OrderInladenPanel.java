@@ -16,7 +16,7 @@ public class OrderInladenPanel extends JPanel {
     //Tabel voor de dozen
     private ArrayList<JTable> doosTabellen;
 
-    public OrderInladenPanel(List<Bin> bin) {
+    public OrderInladenPanel(List<Bin> bin, int OrderID) {
         doosTabellen = new ArrayList<>();
         Database db = new Database();
             // Standaard waarden
@@ -67,7 +67,7 @@ public class OrderInladenPanel extends JPanel {
                 int orderId = item.get(0);
 
                 // Call the getOrderLineInfo method from the database with the orderId
-                String[] orderLineInfoArray = db.getOrderLineInfo(orderId);
+                String[] orderLineInfoArray = db.getOrderLineInfo( OrderID, orderId);
 
                 // Add the entire orderLineInfoArray as a single array to the orderLineInfo list
                 orderLineInfo.add(orderLineInfoArray);

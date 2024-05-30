@@ -285,21 +285,22 @@ public class Database {
     }
 
 
-    public String[] getOrderLineInfo(int orderid) {
+    public String[] getOrderLineInfo(int orderid, int stockItemID) {
         String[] info = new String[3];
 
         try (Connection conn = DriverManager.getConnection(url, user, password)) {
-            String statement = "SELECT StockItemID, Description, Quantity FROM orderlines WHERE OrderID = ?;";
+            String statement = "SELECT StockItemID, Description, Quantity FROM orderlines WHERE OrderID = ? && StockItemID = ?;";
             PreparedStatement mystmt = conn.prepareStatement(statement);
             mystmt.setInt(1, orderid);
+            mystmt.setInt(2, stockItemID);
             ResultSet myres = mystmt.executeQuery();
 
             if (myres.next()) {
-                String stockItemID = myres.getString("StockItemID");
+
                 String description = myres.getString("Description");
                 String quantity = myres.getString("Quantity");
 
-                info[0] = stockItemID;
+                info[0] = String.valueOf(stockItemID);
                 info[1] = description;
                 info[2] = quantity;
             } else {
