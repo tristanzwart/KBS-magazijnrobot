@@ -8,10 +8,12 @@ public class BottomBarPanel extends JPanel implements ActionListener {
 
     private ArtikelDialog artikelDialog;
 
+
     private JButton artikelToevoegen;
     private JButton artikelAanpassen;
     private JButton verversen;
     private JButton bekijken;
+    private JButton inladen;
 
     private int HuidigeGeselecteerdeArtikel;
     private int HuidigeGeselecteerdeOrder;
@@ -33,6 +35,10 @@ public class BottomBarPanel extends JPanel implements ActionListener {
         bekijken =new JButton("Bekijken");
         bekijken.addActionListener(this);
         bekijken.setVisible(false);
+        inladen =new JButton("Inladen");
+        inladen.addActionListener(this);
+        inladen.setVisible(false);
+
 
 
 
@@ -53,8 +59,9 @@ public class BottomBarPanel extends JPanel implements ActionListener {
         }else if(buttonName.equals("bekijken")){
             add(bekijken);
 
-        }
-        else {
+        } else if (buttonName.equals("inladen")) {
+            add(inladen);
+        } else {
             //Knop bestaat niet
             System.out.println("Error: Knop bestaat niet");
         }
@@ -66,6 +73,7 @@ public class BottomBarPanel extends JPanel implements ActionListener {
     }
     public void setOrderAanpassenStatus (boolean status) {
         bekijken.setVisible(status);
+        inladen.setVisible(status);
     }
 
     @Override
@@ -79,6 +87,7 @@ public class BottomBarPanel extends JPanel implements ActionListener {
                 //Ververs de orders tabel
                 gui.updateOrderTabelData();
             }
+
 
         } else if (e.getSource() == artikelAanpassen) {
             //TODO: Call modal dialoge
@@ -105,6 +114,11 @@ public class BottomBarPanel extends JPanel implements ActionListener {
             System.out.println(HuidigeGeselecteerdeOrder);
             OrderDialog orderdia = new OrderDialog(gui, true, HuidigeGeselecteerdeOrder);
             gui.updateOrderTabelData();
+        }
+        else if(e.getSource() == inladen){
+
+            OrderInladenDialog orderin = new OrderInladenDialog(gui,true, HuidigeGeselecteerdeOrder, gui);
+            Database.VoorraadVerlagen(HuidigeGeselecteerdeOrder);
         }
     }
 

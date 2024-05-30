@@ -87,6 +87,7 @@ public class OrderDialog extends JDialog implements ActionListener {
 
         // JTable aanmaken met Eigen model hierboven gemaakt
         tabel = new JTable(model);
+        tabel.getTableHeader().setReorderingAllowed(false);
         JScrollPane scrollPane = new JScrollPane(tabel);
         add(scrollPane, BorderLayout.CENTER);
         // zorgt ervoor dat de verwijder knop zichtbaar word.

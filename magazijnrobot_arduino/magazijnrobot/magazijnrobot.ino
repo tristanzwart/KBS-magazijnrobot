@@ -1,6 +1,7 @@
 #define swrechts 12
 #define swlinks 6
 
+int handmatigecom  = 5;
 
 int pwmPinLinksRechts = 11;
 int directionPinLinksRechts = 13;
@@ -14,14 +15,20 @@ float eprev = 0;
 float  eintergral = 0;
 
 int VRX_PIN =  A2; // Arduino pin connected to VRX pin
-// Arduino pin connected to VRY pin
 
-int knop =4;
+
+int comnoodstop = 4;
 bool laasteknopstatus= false;
 int bestemming;
+bool noodstopstatus= false;
 
+bool handmatigeBesturing = false;
+bool blockBesturingLinks = false;
+bool blockBesturingRechts = false;
+bool ready =false;
 
 void setup() {
+  pinMode(handmatigecom, INPUT);
   pinMode(swrechts, INPUT_PULLUP);
   pinMode(swlinks, INPUT_PULLUP);
 
@@ -34,46 +41,67 @@ void setup() {
   pinMode(directionPinLinksRechts, OUTPUT);
   Serial.begin(9600);
   pinMode(2, INPUT);
-  pinMode(knop, INPUT_PULLUP);
+  pinMode(comnoodstop, INPUT);
+
+  while (digitalRead(comnoodstop) == LOW) {
+    
+  }
 
   calibratie();
 
 }
 
 void loop() {
-  // uitlezenJoystick(); // leest joystick uit en beweeegt hiermee de robot
-
-  // eenmaalknopindrukken();
-
-  checkEindebaan();
+  //Print de positie voor de hmi
+  //Serial.println(pos);
   communicatieHMI();
+  if(!digitalRead(comnoodstop)){
+  stop();
+  }
+  else{
+  checkEindebaan();
+  if(!digitalRead(handmatigecom)){
+    handmatigeBesturing= true;
+    uitlezenJoystick();
+    // eenmaalknopindrukken();
+    }
+  else{
+    handmatigeBesturing= false;
+    
   naarbestemming(bestemming);
+  if (bestemming - pos <= 10 && bestemming - pos >= -10 && !ready ){
+        Serial.println( "2 ready");
+        ready = true;
+      }
+  }
+  }
   
 
 }
 
-void eenmaalknopindrukken(){
-  bool knop1 = knopuitlezen();
-  if(knop1 != laasteknopstatus && knop1 == HIGH ){    // zorgt ervoor dat de knop inet herhaalt (een signaal)
-    knopingedrukt();
-  }
-  laasteknopstatus = knop1;
-}
 
-bool knopuitlezen(){
-  bool knopWaarde = digitalRead(knop);
-  delay(50);
-  return knopWaarde;
 
-}
+// void eenmaalknopindrukken(){
+//   bool knop1 = knopuitlezen();
+//   if(knop1 != laasteknopstatus && knop1 == HIGH ){    // zorgt ervoor dat de knop inet herhaalt (een signaal)
+    
+//   }
+//   laasteknopstatus = knop1;
+// }
 
-void knopingedrukt(){
-  Serial.print('g');      //versturen van een signaal
-}
+// bool knopuitlezen(int knop){
+//   bool knopWaarde = digitalRead(knop);
+//   delay(50);
+//   return knopWaarde;
+
+// }
+
+
 
 void uitlezenJoystick(){
 
   int xValue = analogRead(VRX_PIN);
+  //Serial.println(xValue);
 
   if(xValue < 500){
     stop();
@@ -88,6 +116,7 @@ void uitlezenJoystick(){
   else{
     stop();
   }
+  
 
 }
 
@@ -97,13 +126,21 @@ void stop(){
 }
 
 void naarLinks(int pwm){
-  digitalWrite(directionPinLinksRechts, LOW);
-  analogWrite(pwmPinLinksRechts, pwm);
+  if(!blockBesturingLinks || !handmatigeBesturing){
+    digitalWrite(directionPinLinksRechts, LOW);
+    analogWrite(pwmPinLinksRechts, pwm);
+  }else{
+    stop();
+  }
 }
 
 void naarRechts(int pwm){
-  digitalWrite(directionPinLinksRechts, HIGH);
-  analogWrite(pwmPinLinksRechts, pwm);
+  if(!blockBesturingRechts || !handmatigeBesturing){
+    digitalWrite(directionPinLinksRechts, HIGH);
+    analogWrite(pwmPinLinksRechts, pwm);
+  }else{
+    stop();
+  }
 }
 
 void naarbestemming(int target){
@@ -117,10 +154,15 @@ void naarbestemming(int target){
  prevT = currentTime;
 
  int e = pos- target;
+ if (abs(e) <= 10) {
+        // If within margin, stop the motor
+        setMotor(0,0,pwmPinLinksRechts,directionPinLinksRechts);
+        return;
+}
 
  float dedt = (e-eprev)/ (deltaT);
 
- eintergral = eintergral = e*deltaT;
+ eintergral = eintergral + e*deltaT;
 
  float u = kp*e + kd*dedt + ki*eintergral;
 
@@ -128,9 +170,10 @@ void naarbestemming(int target){
   if( pwr > 255 ){
     pwr = 255;
   }
-  if(pwr < 90 && pwr >0){
-    pwr= 90;
+  if(pwr < 120 && pwr >0){
+    pwr= 120;
   }
+ 
 
   // motor direction
   int dir = 1;
@@ -187,24 +230,43 @@ void calibratie(){
 
 void checkEindebaan(){
   if(digitalRead(swrechts)){
-    calibratie();
+    if(!handmatigeBesturing){
+      calibratie();
+    }else{
+      blockBesturingLinks = true;
+    }
+  
     //Terug naar recths totdat de switch weer uit is.
-
-
-
+  }else{
+    blockBesturingLinks = false;
   }
 
   if(digitalRead(swlinks)){
     //Als deze switch wordt aangeraakt dan is er iets fout gegaan en moet er worden ge her calibreerd
-    calibratie();
+    if(!handmatigeBesturing){
+      calibratie();
+    }else{
+      blockBesturingRechts = true;
+    }
+  }else{
+    blockBesturingRechts = false;
   }
 }
 
 void communicatieHMI() {
   if (Serial.available() > 0) {
+    
     String data = Serial.readStringUntil('\n'); // Lees de binnenkomende data tot newline
-//     serial.println() //om data terug te sturen naar java.
+  // if (data == "stop") {
+  //     if(noodstopstatus == false) {
+  //       noodstopstatus = true;
+  //     }
+  //     if(noodstopstatus == true) {
+  //       noodstopstatus = false;
+  //     }
+  //   }
     bestemming = data.toInt();
+    ready= false;
   }
 }
 

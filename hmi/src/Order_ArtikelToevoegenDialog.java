@@ -35,21 +35,25 @@ public class Order_ArtikelToevoegenDialog extends JDialog {
                 this.hoeveelheid = Integer.parseInt(hoeveelheidField.getText());
                 this.artikelnummer = Integer.parseInt(artikelnummerField.getText());
                 String Artikelnaam = Database.getStockItemName(this.artikelnummer);
-                if(Artikelnaam != null) {
-                    bevestigingsdialog.show("Weet u zeker dat u " + hoeveelheid + " keer " + Artikelnaam + " wilt toevoegen?");
-                    if (bevestigingsdialog.antwoord() == true) {
-                        Database.addOrderLine(OrderID, hoeveelheid, artikelnummer);
-                        this.feedback = "Artikel toegevoegd!";
-                    } else if (bevestigingsdialog.antwoord() == false) {
-                        this.feedback = "";
-                    }
-
+                if (this.hoeveelheid <= 0) {
+                    this.feedback = "Je kunt niet minder dan 1 artikel toevoegen";
                     setVisible(false);
                 } else {
-                    this.feedback = "Artikelnummer bestaat niet";
-                    setVisible(false);
-                }
+                    if(Artikelnaam != null) {
+                        bevestigingsdialog.show("Weet u zeker dat u " + hoeveelheid + " keer " + Artikelnaam + " wilt toevoegen?");
+                        if (bevestigingsdialog.antwoord() == true) {
+                            Database.addOrderLine(OrderID, hoeveelheid, artikelnummer);
+                            this.feedback = "Artikel toegevoegd!";
+                        } else if (bevestigingsdialog.antwoord() == false) {
+                            this.feedback = "";
+                        }
 
+                        setVisible(false);
+                    } else {
+                        this.feedback = "Artikelnummer bestaat niet";
+                        setVisible(false);
+                    }
+                }
             } catch (NumberFormatException ex) {
                 this.feedback = "Ongeldige invoer bij toevoegen van Artikel";
                 setVisible(false);

@@ -13,6 +13,7 @@ public class Database {
     public Database() {
 
     }
+
     /*
     public void allStockItems () {
         try (Connection conn = DriverManager.getConnection(url, user, password); // Maak verbinding met de database
@@ -68,6 +69,7 @@ public class Database {
             return null;
         }
     }
+
     public Object[][] getOrderlines(int OrderID) {
         List<Object[]> rows = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(url, user, password);
@@ -78,7 +80,7 @@ public class Database {
                 while (rs.next()) {
                     Object[] row = new Object[4]; // Number of columns is 4
                     for (int i = 1; i <= 4; i++) {
-                        row[i-1] = rs.getObject(i);
+                        row[i - 1] = rs.getObject(i);
                     }
                     rows.add(row);
                 }
@@ -94,7 +96,7 @@ public class Database {
         List<Object[]> rows = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(url, user, password);
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT h.StockItemLocation, s.StockItemID, h.QuantityOnHand, StockItemName FROM stockitems s JOIN stockitemholdings h ON s.StockItemID = h.StockItemID ORDER BY StockItemID");) {
+             ResultSet rs = stmt.executeQuery("SELECT h.StockItemLocation, s.StockItemID, h.QuantityOnHand, StockItemName FROM stockitems s JOIN stockitemholdings h ON s.StockItemID = h.StockItemID WHERE h.StockItemLocation IS NOT NULL ORDER BY StockItemID");) {
 
             ResultSetMetaData rsmd = rs.getMetaData();
             int columnCount = rsmd.getColumnCount();
@@ -116,7 +118,7 @@ public class Database {
     public Object[][] getOrders() {
         List<Object[]> rows = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(url, user, password);
-             PreparedStatement pstmt = conn.prepareStatement("SELECT o.OrderId, o.CustomerID, SUM(l.Quantity) AS TotalQuantity, o.Comments FROM orders o JOIN orderlines l ON o.OrderID = l.OrderID GROUP BY o.OrderId, o.CustomerID, o.Comments LIMIT 100")) {
+             PreparedStatement pstmt = conn.prepareStatement("SELECT o.OrderId, o.CustomerID, SUM(l.Quantity) AS TotalQuantity, o.Comments FROM orders o JOIN orderlines l ON o.OrderID = l.OrderID WHERE o.InternalComments != 'IsPicked' GROUP BY o.OrderId, o.CustomerID, o.Comments LIMIT 100")) {
 
             ResultSet rs = pstmt.executeQuery();
             ResultSetMetaData rsmd = rs.getMetaData();
@@ -238,9 +240,114 @@ public class Database {
         return stockItemName;
     }
 
+    public static String getlocatie(int StockItemID) {
+        String stockItemloc = null;
+        try (Connection conn = DriverManager.getConnection(url, user, password)) {
+            String query = "SELECT StockItemLocation FROM stockitemholdings WHERE StockItemID = ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                pstmt.setInt(1, StockItemID);
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    if (rs.next()) {
+                        stockItemloc = rs.getString("StockItemLocation");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching stock item loc");
+        }
+        return stockItemloc;
+    }
 
 
+    public List<List<Integer>> voorBinPacking(int OrderID) {
+        List<List<Integer>> result = new ArrayList<>();
+        try (Connection conn = DriverManager.getConnection(url, user, password);
+             PreparedStatement pstmt = conn.prepareStatement("SELECT o.StockItemID, o.Quantity, s.InternalComments FROM orderlines o JOIN stockitems s ON o.StockItemID = s.StockItemID WHERE o.OrderID = ?")) {
+            pstmt.setInt(1, OrderID); // Set the OrderID parameter in the prepared statement
 
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    List<Integer> row = new ArrayList<>(3);
+                    row.add(rs.getInt("StockItemID"));
+                    row.add(rs.getInt("Quantity"));
+                    row.add(Integer.parseInt(rs.getString("InternalComments"))); // Ensure InternalComments can be converted to an integer
+
+                    result.add(row);
+
+                    // Convert InternalComments to an integer and call UpdateItemData
+
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching order lines: " + e.getMessage());
+        }
+        return result;
+    }
+
+
+    public String[] getOrderLineInfo(int orderid, int stockItemID) {
+        String[] info = new String[3];
+
+        try (Connection conn = DriverManager.getConnection(url, user, password)) {
+            String statement = "SELECT StockItemID, Description, Quantity FROM orderlines WHERE OrderID = ? && StockItemID = ?;";
+            PreparedStatement mystmt = conn.prepareStatement(statement);
+            mystmt.setInt(1, orderid);
+            mystmt.setInt(2, stockItemID);
+            ResultSet myres = mystmt.executeQuery();
+
+            if (myres.next()) {
+
+                String description = myres.getString("Description");
+                String quantity = myres.getString("Quantity");
+
+                info[0] = String.valueOf(stockItemID);
+                info[1] = description;
+                info[2] = quantity;
+            } else {
+                System.out.println("No order lines found for OrderID: " + orderid);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Failed to retrieve order line info");
+            e.printStackTrace(); // For more detailed error information
+            return null;
+        }
+
+        return info;
+    }
+
+    public String getcustomername(int Orderid) {
+        String customerName = null;
+        String statement = "SELECT CustomerName FROM customers WHERE CustomerID IN (SELECT CustomerID FROM orders WHERE OrderID = ?);";
+        try (Connection conn = DriverManager.getConnection(url, user, password);
+             PreparedStatement mystmt = conn.prepareStatement(statement)) {
+
+            mystmt.setInt(1, Orderid);
+            try (ResultSet myres = mystmt.executeQuery()) {
+                if (myres.next()) {
+                    customerName = myres.getString("CustomerName");
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Failed to retrieve customer name");
+            e.printStackTrace(); // For more detailed error information
+        }
+        return customerName;
+    }
+
+
+    public static void VoorraadVerlagen(int OrderID) {
+        try (Connection conn = DriverManager.getConnection(url, user, password)) {
+            // Query voor het bijwerken van de 'QuantityOnHand' van een specifiek 'StockItemID'
+            String query = "UPDATE stockitemholdings SET QuantityOnHand = QuantityOnHand - 1 WHERE StockItemID IN (SELECT StockItemID FROM orderlines WHERE OrderID = ?)";
+            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                pstmt.setInt(1, OrderID);
+                pstmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            System.out.println("Updaten van Orderline is mislukt!");
+        }
+    }
 }
 
 
