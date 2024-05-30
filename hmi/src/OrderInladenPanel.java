@@ -79,7 +79,7 @@ public class OrderInladenPanel extends JPanel {
                 data[j] = orderLineInfo.get(j);
             }
 
-            String[] columnNames = {"Artikelnummer", "Artikelnaam", "Op vooraad"};
+            String[] columnNames = {"Artikelnummer", "Artikelnaam", "Aantal"};
 
             JTable doosTabel = new JTable(new DefaultTableModel(data, columnNames));
             doosTabel.setDefaultEditor(Object.class, null);

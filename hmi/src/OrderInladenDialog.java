@@ -46,6 +46,7 @@ public class OrderInladenDialog extends JDialog {
         protected Void doInBackground() throws Exception {
             for (String[] route : routes) {
                 panel.setLocations(route);
+                panel.setLastLocation("Start");
                 if (route.length >= 1) {  // Ensure each route has at least 1 strings
                     for (int i = 0; i < route.length; i++) {
                         System.out.println(route[i]);
