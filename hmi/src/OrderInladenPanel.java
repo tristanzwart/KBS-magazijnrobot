@@ -183,7 +183,7 @@ public class OrderInladenPanel extends JPanel {
         int beginx = 550;
         int beginy = 600;
         ArrayList<Integer> xy = new ArrayList<Integer>();
-        if (location.equals("Start") || location.equals("Eind")) {
+        if (location.equals("Start") || location.equals("Eind") || location.equals("60")) {
             xy.add(650);
             xy.add(600);
         } else {
@@ -208,7 +208,11 @@ public class OrderInladenPanel extends JPanel {
     }
 
     public void setLocations(String[] locaties) {
-        this.locaties = locaties;
+        String[] newArray = new String[locaties.length+1];
+        newArray[0] = "Start";
+        System.arraycopy(locaties, 0, newArray, 1, locaties.length);
+        System.out.println("new array: " + newArray);
+        this.locaties = newArray;
         repaint();
     }
 
