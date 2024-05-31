@@ -13,13 +13,7 @@ public class BinPacking {
         itemsData = database.voorBinPacking(OrderID);
     }
 
-//    public static void UpdateItemData(int ID, int quantity, int afmeting){
-//        itemsData.add(List.of(ID, quantity, afmeting));
-//    }
 
-    public void ClearItemsData(){
-        itemsData.clear();
-    }
 
     // Best Fit algoritme om items in dozen te plaatsen
     public List<Bin> besteFit() {

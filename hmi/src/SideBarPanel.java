@@ -42,11 +42,11 @@ public class SideBarPanel extends JPanel implements ActionListener {
         noodstop.setPreferredSize(buttonSize);
 
         add(orders);
-        add(Box.createRigidArea(new Dimension(0, 10))); // Adding vertical space between buttons
+        add(Box.createRigidArea(new Dimension(0, 10)));
         add(voorraad);
-        add(Box.createRigidArea(new Dimension(0, 10))); // Adding vertical space between buttons
+        add(Box.createRigidArea(new Dimension(0, 10)));
         add(robot);
-        add(Box.createRigidArea(new Dimension(0, 10))); // Adding vertical space between buttons
+        add(Box.createRigidArea(new Dimension(0, 10)));
         add(feedback);
 
         noodstop.setBackground(Color.red);

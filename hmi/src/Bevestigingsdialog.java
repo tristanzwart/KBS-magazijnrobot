@@ -4,7 +4,7 @@ public class Bevestigingsdialog  {
     private String tekst;
     private boolean antwoord = false;
     public void show(String tekst) {
-        // Set Dutch button text
+        // Knop opties
         Object[] options = {"Ja", "Nee"};
 
         this.tekst = tekst;
@@ -12,11 +12,11 @@ public class Bevestigingsdialog  {
         int response = JOptionPane.showOptionDialog(null, this.tekst, "Waarschuwing",
                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
         if (response == JOptionPane.YES_OPTION) {
-            // User selected YES, perform action here
+            // Als optie ja gekozen
             System.out.println("Gebruiker bevestigde actie");
             this.antwoord = true;
         } else {
-            // User selected NO or closed the dialog, handle it here
+            // Als optie nee gekozen
             System.out.println("Gebruiker annuleerde actie");
             this.antwoord = false;
         }

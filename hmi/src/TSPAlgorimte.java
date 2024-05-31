@@ -81,21 +81,21 @@ public class TSPAlgorimte {
     public List<String[]> BinToTSP(List<Bin> verpakteBoxen) {
         List<String[]> puntenlijsten = new ArrayList<>();
 
-        // Initialize the first array and a counter
+
         String[] puntenlijst = new String[3];
         int index = 0;
 
-        // Iterate through the boxes
+
         for (Bin bin : verpakteBoxen) {
             for (List<Integer> item : bin.getItems()) {
-                // Get the location for the item
+
                 String locatie = Database.getlocatie(item.get(0));
 
-                // Add the location to the current array
+
                 puntenlijst[index] = locatie;
                 index++;
 
-                // If the current array is full, add it to the list and start a new array
+
                 if (index == 3) {
                     puntenlijsten.add(puntenlijst);
                     puntenlijst = new String[3];
@@ -104,12 +104,11 @@ public class TSPAlgorimte {
             }
         }
 
-        // Add the last array if it has any elements
+
         if (index > 0) {
             puntenlijsten.add(puntenlijst);
         }
 
-        // Return the list of string arrays
         return puntenlijsten;
     }
 

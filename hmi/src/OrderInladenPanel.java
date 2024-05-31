@@ -21,7 +21,7 @@ public class OrderInladenPanel extends JPanel {
         Database db = new Database();
             // Standaard waarden
         setPreferredSize(new Dimension(1500, 900));
-        setLayout(null); // Use null layout for absolute positioning
+        setLayout(null);
 
         start = new JPanel(new GridLayout(1,1));
         start.setSize(100,100);
@@ -33,10 +33,10 @@ public class OrderInladenPanel extends JPanel {
         start.add(startLabel);
         add(start);
 
-        magazijn = new JPanel(new GridLayout(5, 5)); // Create a 5x5 grid layout
+        magazijn = new JPanel(new GridLayout(5, 5));
         magazijn.setSize(500, 500);
-        magazijn.setLocation(100, 150); // Set the location of the grid panel
-        magazijn.setOpaque(false); // Make the panel transparent
+        magazijn.setLocation(100, 150);
+        magazijn.setOpaque(false);
 
         // Coordinates with reverse order
         String[] rows = {"E", "D", "C", "B", "A"};
@@ -49,7 +49,7 @@ public class OrderInladenPanel extends JPanel {
                 magazijn.add(cellLabel);
             }
         }
-        add(magazijn); // Add the grid panel to the main panel
+        add(magazijn);
 
         //Visualisatie van de dozen
         //Voor elke doos deze for loop uitvoeren
@@ -58,22 +58,20 @@ public class OrderInladenPanel extends JPanel {
             doosLabel.setBounds(1100, 30 + i * 150, 100, 50);
             add(doosLabel);
 
-            // Initialize the orderLineInfo list outside the loop
             List<Object[]> orderLineInfo = new ArrayList<>();
 
-            // Iterate over all items in the bin
+
             for (List<Integer> item : bin.get(i).getItems()) {
-                // Retrieve the orderId from the item
+
                 int orderId = item.get(0);
 
-                // Call the getOrderLineInfo method from the database with the orderId
+
                 String[] orderLineInfoArray = db.getOrderLineInfo( OrderID, orderId);
 
-                // Add the entire orderLineInfoArray as a single array to the orderLineInfo list
+
                 orderLineInfo.add(orderLineInfoArray);
             }
 
-            // Convert List<Object[]> to Object[][]
             Object[][] data = new Object[orderLineInfo.size()][];
             for (int j = 0; j < orderLineInfo.size(); j++) {
                 data[j] = orderLineInfo.get(j);
@@ -105,45 +103,45 @@ public class OrderInladenPanel extends JPanel {
         if (locaties == null || locaties.length < 2) return;
 
         Graphics2D g2 = (Graphics2D) g;
-        g2.setStroke(new BasicStroke(3)); // Set the line thickness to 3
+        g2.setStroke(new BasicStroke(3));
 
         ArrayList<Integer> prevCoord = getLocaties(locaties[0]);
-        boolean isRed = false; // Flag to check if the red line has started
-        boolean afterRedLine = false; // Flag to check if we are after the red line
-        boolean afterOrangeSquare = false; // Flag to check if we are after the orange square
+        boolean isRed = false;
+        boolean afterRedLine = false;
+        boolean afterOrangeSquare = false;
 
         for (int i = 1; i < locaties.length; i++) {
             ArrayList<Integer> currCoord = getLocaties(locaties[i]);
 
-            // If the previous location is the last location and status is "Bewegen", set color to red and start the red line
+
             if (locaties[i-1].equals(lastLocation) && status.equals("Bewegen")) {
                 isRed = true;
-                afterRedLine = true; // Set the flag to true as we are now after the red line
+                afterRedLine = true;
             }
 
-            // Draw a square at each location, green before the red line and red after
+
             if (!afterRedLine && !afterOrangeSquare) {
                 g2.setColor(Color.GREEN);
                 g2.fillRect(currCoord.get(0) - 50, currCoord.get(1) - 50, 100, 100);
             }
 
-            // If status is "Pakken" and this is the last location, draw an orange square
+
             if (status.equals("Pakken") && locaties[i].equals(lastLocation)) {
                 g2.setColor(Color.ORANGE);
                 g2.fillRect(currCoord.get(0) - 50, currCoord.get(1) - 50, 100, 100);
-                afterOrangeSquare = true; // Set the flag to true as we are now after the orange square
+                afterOrangeSquare = true;
             }
 
-            // Set color to blue for the lines, unless the red line has started
+
             g2.setColor(isRed ? Color.RED : Color.BLUE);
             drawArrow(g2, prevCoord.get(0), prevCoord.get(1), currCoord.get(0), currCoord.get(1));
 
-            // Reset the red line flag after drawing it
+
             if (isRed) {
                 isRed = false;
             }
 
-            // Update previous coordinate to current
+
             prevCoord = currCoord;
         }
     }

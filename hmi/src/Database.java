@@ -14,32 +14,6 @@ public class Database {
 
     }
 
-    /*
-    public void allStockItems () {
-        try (Connection conn = DriverManager.getConnection(url, user, password); // Maak verbinding met de database
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM stockitems")) { // Voer de sql statement uit
-
-            // Haal het aantal kolommen op
-            ResultSetMetaData rsmd = rs.getMetaData();
-            int columnCount = rsmd.getColumnCount();
-
-            // Itereer door de resultaatset
-            while (rs.next()) {
-                // Print elke kolom van de rij
-                for (int i = 1; i <= columnCount; i++) {
-                    String columnName = rsmd.getColumnName(i);
-                    String value = rs.getString(i);
-                    System.out.print(columnName + ": " + value + " ");
-                }
-                // Print een nieuwe regel aan het einde van elke rij
-                System.out.println();
-            }
-        } catch (SQLException e) {
-            System.out.println("Fout bij het ophalen van stockitems");
-        }
-    }
-    */
     public String[] getorderinfo(int orderid) {
         try (Connection conn = DriverManager.getConnection(url, user, password)) {
             String[] info = new String[3];
@@ -59,7 +33,7 @@ public class Database {
                 info[2] = orderDate;
             } else {
 
-                System.out.println("No order found for OrderID: " + orderid);
+                System.out.println("Geen order gevonden voor OrderID: " + orderid);
             }
 
             return info;
@@ -74,11 +48,11 @@ public class Database {
         List<Object[]> rows = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(url, user, password);
              PreparedStatement pstmt = conn.prepareStatement("SELECT OrderLineID, StockItemID, Description, Quantity FROM orderlines WHERE OrderID = ?")) {
-            pstmt.setInt(1, OrderID); // Set the OrderID parameter in the prepared statement
+            pstmt.setInt(1, OrderID); // Goede OrderID meenemen
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    Object[] row = new Object[4]; // Number of columns is 4
+                    Object[] row = new Object[4]; // 4 kolommen
                     for (int i = 1; i <= 4; i++) {
                         row[i - 1] = rs.getObject(i);
                     }
@@ -86,7 +60,7 @@ public class Database {
                 }
             }
         } catch (SQLException e) {
-            System.out.println("Error fetching order lines: " + e.getMessage());
+            System.out.println("Error met ophalen orderlines: " + e.getMessage());
         }
         return rows.toArray(new Object[0][]);
     }
@@ -99,7 +73,6 @@ public class Database {
              ResultSet rs = stmt.executeQuery("SELECT h.StockItemLocation, s.StockItemID, h.QuantityOnHand, StockItemName FROM stockitems s JOIN stockitemholdings h ON s.StockItemID = h.StockItemID WHERE h.StockItemLocation IS NOT NULL ORDER BY StockItemID");) {
 
             ResultSetMetaData rsmd = rs.getMetaData();
-            int columnCount = rsmd.getColumnCount();
 
             while (rs.next()) {
                 Object[] row = new Object[4]; //4 is het aantal kolommen dit staat vast
@@ -110,7 +83,7 @@ public class Database {
                 rows.add(row);
             }
         } catch (SQLException e) {
-            System.out.println("Error fetching stock items");
+            System.out.println("Error met ophalen stock items");
         }
         return rows.toArray(new Object[0][]);
     }
@@ -132,7 +105,7 @@ public class Database {
                 rows.add(row);
             }
         } catch (SQLException e) {
-            System.out.println("Error fetching order items");
+            System.out.println("Error met ophalen order items");
         }
         return rows.toArray(new Object[0][]);
     }
@@ -205,13 +178,13 @@ public class Database {
                 pstmt.executeUpdate();
             }
         } catch (SQLException e) {
-            System.out.println("Adding new order line failed!");
+            System.out.println("Toevoegen orderline mislukt");
         }
     }
 
     public static void deleteOrderLine(int orderLineID) {
         try (Connection conn = DriverManager.getConnection(url, user, password)) {
-            // Delete orderline
+            // Verwijder orderline
             String query = "DELETE FROM orderlines WHERE OrderLineID = ?";
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
                 pstmt.setInt(1, orderLineID);
@@ -235,7 +208,7 @@ public class Database {
                 }
             }
         } catch (SQLException e) {
-            System.out.println("Error fetching stock item name");
+            System.out.println("Error met ophalen stock item naam");
         }
         return stockItemName;
     }
@@ -253,7 +226,7 @@ public class Database {
                 }
             }
         } catch (SQLException e) {
-            System.out.println("Error fetching stock item loc");
+            System.out.println("Error met ophalen stock item locatie");
         }
         return stockItemloc;
     }
@@ -263,23 +236,23 @@ public class Database {
         List<List<Integer>> result = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(url, user, password);
              PreparedStatement pstmt = conn.prepareStatement("SELECT o.StockItemID, o.Quantity, s.InternalComments FROM orderlines o JOIN stockitems s ON o.StockItemID = s.StockItemID WHERE o.OrderID = ?")) {
-            pstmt.setInt(1, OrderID); // Set the OrderID parameter in the prepared statement
+            pstmt.setInt(1, OrderID); // OrderID meegeven
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     List<Integer> row = new ArrayList<>(3);
                     row.add(rs.getInt("StockItemID"));
                     row.add(rs.getInt("Quantity"));
-                    row.add(Integer.parseInt(rs.getString("InternalComments"))); // Ensure InternalComments can be converted to an integer
+                    row.add(Integer.parseInt(rs.getString("InternalComments")));
 
                     result.add(row);
 
-                    // Convert InternalComments to an integer and call UpdateItemData
+
 
                 }
             }
         } catch (SQLException e) {
-            System.out.println("Error fetching order lines: " + e.getMessage());
+            System.out.println("Error met ophalen order lines: " + e.getMessage());
         }
         return result;
     }
@@ -309,7 +282,7 @@ public class Database {
 
         } catch (SQLException e) {
             System.out.println("Failed to retrieve order line info");
-            e.printStackTrace(); // For more detailed error information
+            e.printStackTrace();
             return null;
         }
 
@@ -330,7 +303,7 @@ public class Database {
             }
         } catch (SQLException e) {
             System.out.println("Failed to retrieve customer name");
-            e.printStackTrace(); // For more detailed error information
+            e.printStackTrace();
         }
         return customerName;
     }

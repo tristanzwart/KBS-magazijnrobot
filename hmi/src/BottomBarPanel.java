@@ -26,8 +26,6 @@ public class BottomBarPanel extends JPanel implements ActionListener {
         setLayout(new FlowLayout(FlowLayout.LEFT, 5, 37));
 
         //Elementen initialiseren
-//        artikelToevoegen = new JButton("Artikel toevoegen");
-//        artikelToevoegen.addActionListener(this);
         artikelAanpassen = new JButton("Artikel aanpassen");
         artikelAanpassen.addActionListener(this);
         verversen = new JButton("Verversen");
@@ -90,9 +88,7 @@ public class BottomBarPanel extends JPanel implements ActionListener {
 
 
         } else if (e.getSource() == artikelAanpassen) {
-            //TODO: Call modal dialoge
             artikelDialog.toonDialog("Artikel Aanpassen", String.valueOf(HuidigeVoorraad));
-            //TODO:Get data from dialoge
             if (artikelDialog.isOk()) {
                 if (artikelDialog.getBeginVoorraad() != artikelDialog.getVooraad()) {
                     if (artikelDialog.getVooraad() == -99999999) {
@@ -105,9 +101,6 @@ public class BottomBarPanel extends JPanel implements ActionListener {
                     }
                 }
             }
-            //TODO: Add data to database
-
-            //TODO: Refresh table
             
         } else if (e.getSource() == bekijken) {
             System.out.println("mooi");

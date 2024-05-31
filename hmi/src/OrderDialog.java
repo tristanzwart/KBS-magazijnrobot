@@ -37,28 +37,28 @@ public class OrderDialog extends JDialog implements ActionListener {
 
         if (info != null) {
             JPanel infopanel = new JPanel();
-            infopanel.setLayout(new GridLayout(1, 3, 0, 10)); // 3 rows, 1 column, vertical gap of 10 pixels
+            infopanel.setLayout(new GridLayout(1, 3, 0, 10)); // 3 rows, 1 column.
 
             ordernummer = new JLabel("Ordernummer: " + OrderID);
             ordernummer.setBorder(new CompoundBorder(
-                    BorderFactory.createEmptyBorder(5, 10, 5, 10), // EmptyBorder to add margin
-                    BorderFactory.createLineBorder(Color.BLACK, 1) // LineBorder with black color and thickness 1
+                    BorderFactory.createEmptyBorder(5, 10, 5, 10),
+                    BorderFactory.createLineBorder(Color.BLACK, 1)
             ));
             ordernummer.setHorizontalAlignment(JLabel.CENTER);
             infopanel.add(ordernummer);
 
             klantnummer = new JLabel("Klantnummer: " + info[1]);
             klantnummer.setBorder(new CompoundBorder(
-                    BorderFactory.createEmptyBorder(5, 10, 5, 10), // EmptyBorder to add margin
-                    BorderFactory.createLineBorder(Color.BLACK, 1) // LineBorder with black color and thickness 1
+                    BorderFactory.createEmptyBorder(5, 10, 5, 10),
+                    BorderFactory.createLineBorder(Color.BLACK, 1)
             ));
             klantnummer.setHorizontalAlignment(JLabel.CENTER);
             infopanel.add(klantnummer);
 
             aanmaakdatum = new JLabel("Aanmaakdatum: " + info[2]);
             aanmaakdatum.setBorder(new CompoundBorder(
-                    BorderFactory.createEmptyBorder(5, 10, 5, 10), // EmptyBorder to add margin
-                    BorderFactory.createLineBorder(Color.BLACK, 1) // LineBorder with black color and thickness 1
+                    BorderFactory.createEmptyBorder(5, 10, 5, 10),
+                    BorderFactory.createLineBorder(Color.BLACK, 1)
             ));
             aanmaakdatum.setHorizontalAlignment(JLabel.CENTER);
 
@@ -68,7 +68,7 @@ public class OrderDialog extends JDialog implements ActionListener {
             add(infopanel, BorderLayout.NORTH);
         } else {
             JLabel errorLabel = new JLabel("Order not found for OrderID: " + OrderID);
-            errorLabel.setBorder(new EmptyBorder(10, 10, 10, 10)); // Adding margin around error label
+            errorLabel.setBorder(new EmptyBorder(10, 10, 10, 10));
             add(errorLabel, BorderLayout.NORTH);
         }
 
@@ -93,8 +93,6 @@ public class OrderDialog extends JDialog implements ActionListener {
         // zorgt ervoor dat de verwijder knop zichtbaar word.
         tabel.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
-                // If a row is selected, make the "Artikel verwijderen" button visible
-                // Otherwise, make it invisible
                 deleteButton.setVisible(!tabel.getSelectionModel().isSelectionEmpty());
             }
         });
@@ -180,7 +178,7 @@ public class OrderDialog extends JDialog implements ActionListener {
             if(tabel.getModel().getRowCount() <= 1) {
                 feedbackLabel.setText("U kunt niet alle artikelen verwijderen!");
             } else {
-                if (selectedRow != -1) { // -1 means no row is selected
+                if (selectedRow != -1) {
                     int orderLineID = Integer.parseInt(tabel.getValueAt(selectedRow, 0).toString());
                     bevestigingsdialog.show("Weet u zeker dat u deze regel wil verwijderen?");
                     if (bevestigingsdialog.antwoord()) {
