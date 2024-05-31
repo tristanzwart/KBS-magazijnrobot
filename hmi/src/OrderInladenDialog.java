@@ -47,37 +47,37 @@ public class OrderInladenDialog extends JDialog {
             for (String[] route : routes) {
                 panel.setLocations(route);
                 panel.setLastLocation("Start");
-                if (route.length >= 1) {  // Ensure each route has at least 1 strings
+                if (route.length >= 1) {
                     for (int i = 0; i < route.length; i++) {
                         System.out.println(route[i]);
 
                         finalArduino1.verstuurData(ArduinoCom.getCoordinates(route[i].charAt(1)));
                         finalArduino2.verstuurData(ArduinoCom.getCoordinates(route[i].charAt(0)));
-                        System.out.println("Sending " + ArduinoCom.getCoordinates(route[i].charAt(1)) + " to arduino1");
-                        System.out.println("Sending " + ArduinoCom.getCoordinates(route[i].charAt(0)) + " to arduino2");
+                        System.out.println("Stuur " + ArduinoCom.getCoordinates(route[i].charAt(1)) + " naar arduino1");
+                        System.out.println("Stuur " + ArduinoCom.getCoordinates(route[i].charAt(0)) + " naar arduino2");
                         panel.setStatus("Bewegen");
                         latch = new CountDownLatch(1);
 
                         try {
-                            latch.await();  // Wait for the "ready" signal
+                            latch.await();
                             panel.setLastLocation(route[i]);
                             panel.setStatus("Pakken");
                             arduino1.verstuurData("oppakken");
-                            System.out.println("Sending 'oppakken' to arduino2");
+                            System.out.println("Stuur 'oppakken' naar arduino2");
                         } catch (InterruptedException e) {
                             Thread.currentThread().interrupt();
                             System.out.println("Thread interrupted");
                         }
                         latch = new CountDownLatch(1);
                         try {
-                            latch.await();  // Wait for the "bewegen" signal
+                            latch.await();
                         } catch (InterruptedException e) {
                             Thread.currentThread().interrupt();
                             System.out.println("Thread interrupted");
                         }
                     }
                 } else {
-                    System.out.println("Invalid route length: " + route.length);
+                    System.out.println("ongeldige route lengte: " + route.length);
                 }
             }
             return null;
@@ -96,7 +96,7 @@ public class OrderInladenDialog extends JDialog {
         System.out.println("Ready status: " + readyReceived1 + " " + readyReceived2);
         if (readyReceived1 == true && readyReceived2 == true || arduino == 0){
             if (latch != null) {
-                latch.countDown();  // Signal that "bewegen" was received
+                latch.countDown();
                 System.out.println("Latch triggerd!");
             }
         }
@@ -117,10 +117,8 @@ public class OrderInladenDialog extends JDialog {
 
 
             for (List<Integer> item : bestfit.get(i).getItems()) {
-                // Retrieve the orderId from the item
                 int stockid = item.get(0);
 
-                // Call the getOrderLineInfo method from the database with the orderId
                 String[] orderLineInfoArray = db.getOrderLineInfo(Orderid, stockid);
                 items.add(orderLineInfoArray);
 
@@ -134,7 +132,7 @@ public class OrderInladenDialog extends JDialog {
 
 
 
-            // Convert List<Object[]> to Object[][]
+
 
 
 

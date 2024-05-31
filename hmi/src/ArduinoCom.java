@@ -71,12 +71,7 @@ public class ArduinoCom {
             comPort.getOutputStream().flush();
 
             // Wacht en lees het antwoord
-//            while (comPort.bytesAvailable() == 0)
-//                Thread.sleep(20);
-//
-//            byte[] readBuffer = new byte[comPort.bytesAvailable()];
-//            int numRead = comPort.readBytes(readBuffer, readBuffer.length);
-//            System.out.println("Ontvangen van Arduino: " + new String(readBuffer, 0, numRead));
+
 
         } catch (Exception e) {
             e.printStackTrace();
