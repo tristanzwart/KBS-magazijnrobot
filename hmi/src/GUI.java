@@ -42,7 +42,7 @@ public class GUI extends JFrame{
         table.getTableHeader().setReorderingAllowed(false);
 
 
-        // Set selection mode
+        // Selecteer modus kiezen
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         //Onderstaande zorgt ervoor dat de knop word getoond als er iets geselecteerd word
         table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
@@ -84,10 +84,9 @@ public class GUI extends JFrame{
                     bottomBar.setHuidigeVoorraad(Integer.parseInt(valueInThirdColumn.toString()));
                     bottomBar.setHuidigeGeselecteerdeArtikel(Integer.parseInt(valueInSecondColumn.toString()));
 
-                    // Uw code om de dialoog te openen gaat hier
-                    //TODO: Call modal dialoge
+
                     artikelDialog.toonDialog("Artikel Aanpassen", String.valueOf(bottomBar.getHuidigeVoorraad()));
-                    //TODO:Get data from dialoge
+
                     if (artikelDialog.isOk()) {
                         if (artikelDialog.getBeginVoorraad() != artikelDialog.getVooraad()) {
                             if (artikelDialog.getVooraad() == -99999999) {
@@ -120,7 +119,7 @@ public class GUI extends JFrame{
 
 
 
-        // Create scroll pane and add table to it
+
         scrollPane = new JScrollPane(table);
         scrollPane.setPreferredSize(new Dimension(1800, 917));
 
@@ -129,7 +128,7 @@ public class GUI extends JFrame{
         setSize(1920, 1080);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout(0,0));
-        //setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+
         //Einde standaard parameters
 
         //Stel het scherm in op fullscreen
@@ -184,17 +183,14 @@ public class GUI extends JFrame{
         // Add scroll pane to main panel
         if (schermNummer == 1 || schermNummer == 2) {
             mainPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0 ,0));
-            // Update table data for "voorraad" or "order" screens
             if (schermNummer == 1) {
                 updateVoorraadTableData();
             } else if (schermNummer == 2) {
                 updateOrderTabelData();
             }
-            // Add scroll pane with table to main panel
             mainPanel.add(scrollPane);
         } else if (schermNummer == 3) {
 
-            // Add content for "robot" screen
             RobotPanel robotPanel = new RobotPanel(this);
             mainPanel.setBorder(BorderFactory.createEmptyBorder(210, 250, 0 ,0));
             mainPanel.add(robotPanel);
@@ -207,7 +203,6 @@ public class GUI extends JFrame{
 
         bottomBar.removeAll();
         if(schermNummer == 1) {
-//            bottomBar.addButton("Artikel toevoegen");
             bottomBar.addButton("Artikel aanpassen");
             bottomBar.addButton("Verversen");
 

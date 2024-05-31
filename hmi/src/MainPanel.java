@@ -11,7 +11,7 @@ public class MainPanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        //setBackground(Color.BLACK);
+
     }
 
 }
